@@ -1,0 +1,25 @@
+diff --git a/make/smoketest.mk b/make/smoketest.mk
+index 9b540da9..32d85ac0 100644
+--- a/make/smoketest.mk
++++ b/make/smoketest.mk
+@@ -396,6 +396,8 @@ ifneq ($(STM32), 0)
+ 	@$(MD5SUM) $(SMOKE_OUT).hex
+ 	$(TINYGO) build -size short -o $(SMOKE_OUT).hex -target=stm32u031           examples/empty
+ 	@$(MD5SUM) $(SMOKE_OUT).hex
++	$(TINYGO) build -size short -o $(SMOKE_OUT).hex -target=stm32u083           examples/empty
++	@$(MD5SUM) $(SMOKE_OUT).hex
+ 	$(TINYGO) build -size short -o $(SMOKE_OUT).hex -target=arduino-uno-q       examples/blinky1
+ 	@$(MD5SUM) $(SMOKE_OUT).hex
+ 	$(TINYGO) build -size short -o $(SMOKE_OUT).hex -target=arduino-uno-q       examples/serial
+diff --git a/src/runtime/runtime_stm32.go b/src/runtime/runtime_stm32.go
+index c4f2ef66..df87333b 100644
+--- a/src/runtime/runtime_stm32.go
++++ b/src/runtime/runtime_stm32.go
+@@ -6,6 +6,7 @@ import "device/arm"
+ 
+ //export Reset_Handler
+ func main() {
++	initVectorTable()
+ 	preinit()
+ 	run()
+ 	exit(0)

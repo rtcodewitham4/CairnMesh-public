@@ -1,0 +1,14 @@
+# The TinyGo the firmware is built with. `make check-env` verifies every line
+# against $TINYGOROOT (tools/tinygo.sh check); `make tinygo-apply` sets up a
+# fresh clone at this commit (tools/tinygo.sh apply). U083 support is not
+# upstream: the files below are its only copy outside ~/src/tinygo.
+version 0.42.0
+commit bdc4a21af007d8f059b5cefe5644b7ee7bda5b2d
+# changes to files TinyGo tracks (git diff at the commit)
+diff tinygo.diff
+# files TinyGo does not have: copy in patches/ -> path in TINYGOROOT
+file machine_stm32u083.go.txt src/machine/machine_stm32u083.go
+file stm32u083.json targets/stm32u083.json
+file stm32u083.ld targets/stm32u083.ld
+file runtime_stm32_novtor.go.txt src/runtime/runtime_stm32_novtor.go
+file runtime_stm32u0_vtor.go.txt src/runtime/runtime_stm32u0_vtor.go

@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cairnmesh"
+version = "0.1.0"
+description = "CairnMesh 协议包与设备固件"
+requires-python = ">=3.10"
+license = "AGPL-3.0-only"
+license-files = ["LICENSE"]
+dependencies = []
+
+[project.optional-dependencies]
+# Hardware link: secure envelope (AES-CCM) and the serial port
+secure = ["cryptography>=42"]
+serial = ["pyserial>=3.5"]
+# bench: the RTL-SDR observer (firmware/tools/lora_sdr.py) and its tests
+sdr = ["numpy>=1.26"]
+dev = ["pytest>=8", "ruff>=0.12.11"]
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E9", "F", "B", "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.pylint]
+max-args = 8
+max-branches = 12
+max-statements = 50
+
+# Baseline. These are existing file/rule pairs only; new
+# rules in these files and every selected rule in other files remain errors.
+[tool.ruff.lint.per-file-ignores]
+"cairnmesh/controller.py" = ["C901", "PLR0912", "PLR0913", "PLR0915"]
+"cairnmesh/device.py" = ["PLR0913"]
+"cairnmesh/discovery.py" = ["PLR0913"]
+"cairnmesh/discovery_bench.py" = ["B023"]
+"cairnmesh/energy.py" = ["B008"]
+"cairnmesh/gateway.py" = ["B905", "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915"]
+"cairnmesh/latency.py" = ["PLR0913"]
+"cairnmesh/linkqa.py" = ["B905"]
+"cairnmesh/liveness.py" = ["PLR0913"]
+"cairnmesh/liveness_demo.py" = ["C901", "PLR0915"]
+"cairnmesh/mesh.py" = ["B008", "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915"]
+"cairnmesh/mesh_sim.py" = ["B905", "C901", "F821", "PLR0912", "PLR0913", "PLR0915"]
+"cairnmesh/nodebook.py" = ["B905", "C901", "PLR0912"]
+"cairnmesh/node.py" = ["PLR0913"]
+"cairnmesh/outcomes.py" = ["PLR0911"]
+"cairnmesh/pathview.py" = ["C901", "PLR0912"]
+"cairnmesh/robustness_bench.py" = ["PLR0915"]
+"cairnmesh/secure.py" = ["PLR0911"]
+"cairnmesh/session.py" = ["PLR0913"]
+"cairnmesh/session_bench.py" = ["B023", "PLR0915"]
+"cairnmesh/session_demo.py" = ["B023"]
+"cairnmesh/stress_bench.py" = ["PLR0912"]
+"cairnmesh/uplink.py" = ["PLR0913"]
+"cairnmesh/wake.py" = ["C901", "PLR0911", "PLR0912", "PLR0913"]
+"cairnmesh/wake_bench.py" = ["PLR0912", "PLR0915"]
+
+[tool.setuptools]
+# setup.py filters non-runtime modules out of both the wheel and sdist. Keeping
+# the package itself selected means the source tree and editable installs retain
+# the simulator, demos, benchmarks and conformance tools.
+packages = ["cairnmesh"]
+# This list does not include subpackages. Add a new "cairnmesh.<name>" entry
+# here when the project gains a subpackage.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Default run (CI, gate quick): unit, conformance, short property and fuzz budgets.
+# gate full adds -m slow; a server runs -m "slow or long" (tests/README.md).
+addopts = ["-m", "not slow and not long and not hardware"]
+markers = [
+    "slow: simulator scenarios, minutes (gate full)",
+    "long: long property / fuzz / scenario budgets (servers)",
+    "hardware: the real NUCLEO dual-radio bench (tests/hardware; skipped without the board)",
+]

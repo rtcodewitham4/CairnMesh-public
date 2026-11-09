@@ -1,0 +1,641 @@
+{
+ "version": "v4",
+ "network_key": "30313233343536373839616263646566",
+ "app_keys": {
+  "0x01": {
+   "0": "101112131415161718191a1b1c1d1e1f"
+  }
+ },
+ "controller": 66,
+ "notes": "plain: above the security layer; below: what a relay sees after opening the network envelope; wire: on air. Each sender's FCNT counts from 77.",
+ "frames": [
+  {
+   "name": "wake",
+   "fields": {
+    "class": "WakeFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 5,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "0342010564",
+   "below": "0342010564",
+   "wire": "834201054d000000428f35999cbc",
+   "fcnt": 77,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "request",
+   "fields": {
+    "class": "RequestFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 5,
+    "action": 3,
+    "value": 100,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "01420105640364",
+   "below": "214201056400b5c25fc3ca1e",
+   "wire": "a14201054e000000424fb02406512b99978e3d59bc",
+   "fcnt": 78,
+   "tx": 66,
+   "app_layer": true
+  },
+  {
+   "name": "reply_to_request",
+   "fields": {
+    "class": "ReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 5,
+    "result": 0,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "020142056400",
+   "below": "220142056400d71b9858aa",
+   "wire": "a20142054d0000000131cfe4a6f23ab068f20456",
+   "fcnt": 77,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "reply_to_wake",
+   "fields": {
+    "class": "ReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 6,
+    "result": 0,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "020142066400",
+   "below": "020142066400",
+   "wire": "820142064e00000001eb6338e6f01d",
+   "fcnt": 78,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "heartbeat",
+   "fields": {
+    "class": "HeartbeatFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 9,
+    "state": 1
+   },
+   "route": null,
+   "plain": "0401420901",
+   "below": "0401420901",
+   "wire": "840142094f000000018492b26031",
+   "fcnt": 79,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "hello",
+   "fields": {
+    "class": "HelloFrame",
+    "sender_id": 1,
+    "sequence": 10,
+    "state": 1,
+    "target_id": 255
+   },
+   "route": null,
+   "plain": "0501ff0a01",
+   "below": "0501ff0a01",
+   "wire": "8501ff0a50000000010996a69cc2",
+   "fcnt": 80,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "report",
+   "fields": {
+    "class": "ReportFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 2,
+    "subject": 3,
+    "event": 0,
+    "epoch": 17
+   },
+   "route": null,
+   "plain": "06014202110300",
+   "below": "2601420211000300e65eb293",
+   "wire": "a601420251000000016de3bab758539265de58ba15",
+   "fcnt": 81,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "request_routed",
+   "fields": {
+    "class": "RequestFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 7,
+    "action": 3,
+    "value": 1,
+    "epoch": 100
+   },
+   "route": [
+    7,
+    8
+   ],
+   "plain": "41420107640301070802",
+   "below": "614201076400ee902f46c6f0070802",
+   "wire": "e14201074f0000004246f057d0d03e0b3cc0c6094293a482",
+   "fcnt": 79,
+   "tx": 66,
+   "app_layer": true
+  },
+  {
+   "name": "reply_routed",
+   "fields": {
+    "class": "ReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 7,
+    "result": 0,
+    "epoch": 100
+   },
+   "route": [
+    8,
+    7
+   ],
+   "plain": "420142076400080702",
+   "below": "62014207640094f6ae3a82080702",
+   "wire": "e20142075200000001a1452f637a41f59bd20f450a4fab",
+   "fcnt": 82,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "keepalive",
+   "fields": {
+    "class": "KeepaliveFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 8,
+    "lease": 15,
+    "epoch": 100,
+    "radio": 9
+   },
+   "route": [
+    7,
+    8
+   ],
+   "plain": "47420108640f09070802",
+   "below": "47420108640f09070802",
+   "wire": "c74201085000000042c759b7407bc278d72f0f",
+   "fcnt": 80,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "probe_flood",
+   "fields": {
+    "class": "ProbeFrame",
+    "sender_id": 7,
+    "target_id": 1,
+    "sequence": 11,
+    "origin_id": 66,
+    "window": 20,
+    "hops": [
+     {
+      "node_id": 7,
+      "link": {
+       "rssi": -97,
+       "snr": 22
+      }
+     }
+    ],
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "0807010b644214076116",
+   "below": "0807010b644214076116",
+   "wire": "8807010b4d000000074f7a0f1db777e81bb465",
+   "fcnt": 77,
+   "tx": 7,
+   "app_layer": false
+  },
+  {
+   "name": "probe_routed",
+   "fields": {
+    "class": "ProbeFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 12,
+    "origin_id": 66,
+    "window": 1,
+    "hops": [],
+    "epoch": 100
+   },
+   "route": [
+    7,
+    8
+   ],
+   "plain": "4842010c644201070802",
+   "below": "4842010c644201070802",
+   "wire": "c842010c51000000426244fc6f5f4601af0531",
+   "fcnt": 81,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "probe_reply",
+   "fields": {
+    "class": "ProbeReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 11,
+    "links": [
+     {
+      "rssi": -97,
+      "snr": 22
+     },
+     {
+      "rssi": -118,
+      "snr": -20
+     },
+     {
+      "rssi": -97,
+      "snr": 22
+     }
+    ],
+    "epoch": 100
+   },
+   "route": [
+    8,
+    7
+   ],
+   "plain": "4901420b64611676ec6116080702",
+   "below": "4901420b64611676ec6116080702",
+   "wire": "c901420b530000000157b838699654274a965fcde6f269",
+   "fcnt": 83,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "route_error",
+   "fields": {
+    "class": "RouteErrorFrame",
+    "sender_id": 7,
+    "target_id": 66,
+    "sequence": 7,
+    "broken": 8,
+    "epoch": 100
+   },
+   "route": [],
+   "plain": "4a074207640800",
+   "below": "4a074207640800",
+   "wire": "ca0742074e00000007c7bf966b9662aa",
+   "fcnt": 78,
+   "tx": 7,
+   "app_layer": false
+  },
+  {
+   "name": "trace",
+   "fields": {
+    "class": "TraceFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 13,
+    "query_sequence": 7,
+    "query_epoch": 100,
+    "epoch": 100
+   },
+   "route": [
+    7,
+    8
+   ],
+   "plain": "4b42010d640764070802",
+   "below": "4b42010d640764070802",
+   "wire": "cb42010d520000004254ea13d1c3822b662e56",
+   "fcnt": 82,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "trace_reply",
+   "fields": {
+    "class": "TraceReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 13,
+    "records": [
+     {
+      "rssi_out": -97,
+      "snr_out": 22,
+      "rssi_back": -99,
+      "out_repeats": 1,
+      "out_state": 1,
+      "back_repeats": 0,
+      "back_state": 1
+     }
+    ],
+    "epoch": 100
+   },
+   "route": [
+    8,
+    7
+   ],
+   "plain": "4c01420d6461166351080702",
+   "below": "4c01420d6461166351080702",
+   "wire": "cc01420d54000000017b4e00a23995e39545ca5ed3",
+   "fcnt": 84,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "join",
+   "fields": {
+    "class": "JoinFrame",
+    "sender_id": 1,
+    "target_id": 255,
+    "sequence": 1,
+    "origin_id": 1,
+    "window": 20,
+    "hops": [],
+    "epoch": 1
+   },
+   "route": null,
+   "plain": "0d01ff01010114",
+   "below": "0d01ff01010114",
+   "wire": "8d01ff015500000001c5105f83d62104",
+   "fcnt": 85,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "discover",
+   "fields": {
+    "class": "DiscoverFrame",
+    "sender_id": 66,
+    "target_id": 255,
+    "sequence": 14,
+    "origin_id": 66,
+    "window": 20,
+    "hops": [],
+    "epoch": 100,
+    "spread": 160
+   },
+   "route": null,
+   "plain": "0e42ff0e644214a0",
+   "below": "0e42ff0e644214a0",
+   "wire": "8e42ff0e53000000421b878c39d2aaa3e0",
+   "fcnt": 83,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "discover_reply",
+   "fields": {
+    "class": "DiscoverReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 14,
+    "state": 1,
+    "links": [
+     {
+      "rssi": -97,
+      "snr": 22
+     },
+     {
+      "rssi": -118,
+      "snr": -20
+     },
+     {
+      "rssi": -97,
+      "snr": 22
+     }
+    ],
+    "neighbours": [
+     {
+      "node_id": 9,
+      "link": {
+       "rssi": -118,
+       "snr": -20
+      }
+     }
+    ],
+    "epoch": 100
+   },
+   "route": [
+    8,
+    7
+   ],
+   "plain": "4f01420e6401611676ec61160976ec080702",
+   "below": "4f01420e6401611676ec61160976ec080702",
+   "wire": "cf01420e5600000001d8d7f9b489771e4c68db0da9c31a9d59eaa9",
+   "fcnt": 86,
+   "tx": 1,
+   "app_layer": false
+  },
+  {
+   "name": "wake_net",
+   "fields": {
+    "class": "WakeNetFrame",
+    "sender_id": 66,
+    "sequence": 15,
+    "lease": 20,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "1042ff0f6414",
+   "below": "1042ff0f6414",
+   "wire": "9042ff0f5400000042c54992427678",
+   "fcnt": 84,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "sleep_net",
+   "fields": {
+    "class": "SleepNetFrame",
+    "sender_id": 66,
+    "sequence": 16,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "1142ff1064",
+   "below": "1142ff1064",
+   "wire": "9142ff1055000000423e7bebedcd",
+   "fcnt": 85,
+   "tx": 66,
+   "app_layer": false
+  },
+  {
+   "name": "reply_accepted",
+   "fields": {
+    "class": "ReplyFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 5,
+    "result": 3,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "020142056403",
+   "below": "220142056400840c04e1e3",
+   "wire": "a20142055700000001cde0dca651cc11942cce69",
+   "fcnt": 87,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "result",
+   "fields": {
+    "class": "ResultFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 5,
+    "result": 0,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "120142056400",
+   "below": "320142056400dc68c36ad2",
+   "wire": "b2014205580000000107d9ca966729612317bcb0",
+   "fcnt": 88,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "result_routed",
+   "fields": {
+    "class": "ResultFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 7,
+    "result": 0,
+    "epoch": 100
+   },
+   "route": [
+    8,
+    7
+   ],
+   "plain": "520142076400080702",
+   "below": "720142076400a90e4ec370080702",
+   "wire": "f2014207590000000146a286ff4de13b0e6e59b40a257c",
+   "fcnt": 89,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "result_ack",
+   "fields": {
+    "class": "ReplyFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 5,
+    "result": 0,
+    "epoch": 100
+   },
+   "route": null,
+   "plain": "024201056400",
+   "below": "2242010564002f712c65f0",
+   "wire": "a24201055600000042e4219d43371184d77c0159",
+   "fcnt": 86,
+   "tx": 66,
+   "app_layer": true
+  },
+  {
+   "name": "event",
+   "fields": {
+    "class": "EventFrame",
+    "sender_id": 1,
+    "target_id": 66,
+    "sequence": 3,
+    "event_id": 7,
+    "epoch": 17
+   },
+   "route": null,
+   "plain": "130142031107",
+   "below": "3301420311009c9fffbbf8",
+   "wire": "b30142035a0000000146c2944823f1c9728838ed",
+   "fcnt": 90,
+   "tx": 1,
+   "app_layer": true
+  },
+  {
+   "name": "event_ack",
+   "fields": {
+    "class": "ReplyFrame",
+    "sender_id": 66,
+    "target_id": 1,
+    "sequence": 3,
+    "result": 0,
+    "epoch": 17
+   },
+   "route": null,
+   "plain": "024201031100",
+   "below": "024201031100",
+   "wire": "824201035700000042930a3b759049",
+   "fcnt": 87,
+   "tx": 66,
+   "app_layer": false
+  }
+ ],
+ "relay_passes_on": {
+  "from": "request_routed",
+  "tx": 7,
+  "wire": "e14201074f00000007283d7768a14f641853c562d15bddd3",
+  "note": "same SENDER, FCNT and plain bytes; only TX (and with it the nonce and MIC) changes"
+ },
+ "replay_window": {
+  "size": 32,
+  "steps": [
+   {
+    "fcnt": 100,
+    "accepted": true
+   },
+   {
+    "fcnt": 101,
+    "accepted": true
+   },
+   {
+    "fcnt": 99,
+    "accepted": true
+   },
+   {
+    "fcnt": 101,
+    "accepted": false
+   },
+   {
+    "fcnt": 70,
+    "accepted": true
+   },
+   {
+    "fcnt": 133,
+    "accepted": true
+   },
+   {
+    "fcnt": 101,
+    "accepted": false
+   },
+   {
+    "fcnt": 102,
+    "accepted": true
+   },
+   {
+    "fcnt": 140,
+    "accepted": true
+   }
+  ]
+ },
+ "app_replay": {
+  "from": "request",
+  "fcnt": 1078,
+  "wire": "a142010536040000422e3870b46fec1acec0f6ff26",
+  "expect": "refused (app_failed): the inner MIC is bound to the original FCNT"
+ }
+}

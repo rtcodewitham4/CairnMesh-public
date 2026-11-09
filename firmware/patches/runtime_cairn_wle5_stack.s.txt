@@ -1,0 +1,41 @@
+.syntax unified
+.thumb
+
+// Fill the linker's MSP region with A5A5A5A5 before the Go runtime starts.
+// The limit is captured after saving r4-r11, so this routine never writes its
+// own active frame or return address. Interrupts are still disabled at reset.
+.section .text.cairn_fillSystemStack
+.global cairn_fillSystemStack
+.type cairn_fillSystemStack, %function
+.thumb_func
+cairn_fillSystemStack:
+    push {r4-r11}
+    mov r1, sp
+    ldr r0, =_stack_start
+    ldr r4, =0xA5A5A5A5
+    mov r5, r4
+    mov r6, r4
+    mov r7, r4
+    mov r8, r4
+    mov r9, r4
+    mov r10, r4
+    mov r11, r4
+
+.Lfill_words:
+    add r2, r0, #32
+    cmp r2, r1
+    bhi .Lfill_tail
+    stmia r0!, {r4-r11}
+    b .Lfill_words
+
+.Lfill_tail:
+    cmp r0, r1
+    bhs .Lfill_done
+    str r4, [r0]
+    adds r0, r0, #4
+    b .Lfill_tail
+
+.Lfill_done:
+    pop {r4-r11}
+    bx lr
+.size cairn_fillSystemStack, .-cairn_fillSystemStack

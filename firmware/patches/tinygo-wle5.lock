@@ -1,0 +1,17 @@
+# The TinyGo the STM32WLE5 firmware is built with: a SEPARATE tree from the U083
+# one (~/src/tinygo, patches/tinygo.lock), at the same commit. `LOCK=tinygo-wle5.lock
+# sh tools/tinygo.sh check|apply ROOT` verifies / sets it up. Two tracked files
+# change and six files are new: the upstream stm32wlx runtime stays for every other board.
+version 0.42.0
+commit bdc4a21af007d8f059b5cefe5644b7ee7bda5b2d
+
+# changes to files TinyGo tracks (git diff at the commit)
+diff tinygo-wle5.diff
+
+# files TinyGo does not have: copy in patches/ -> path in TINYGOROOT
+file cairn-wle5.json targets/cairn-wle5.json
+file cairn-wle5.ld targets/cairn-wle5.ld
+file board_cairn_wle5.go.txt src/machine/board_cairn_wle5.go
+file runtime_cairn_wle5.go.txt src/runtime/runtime_cairn_wle5.go
+file runtime_cairn_wle5_stack.s.txt src/runtime/runtime_cairn_wle5_stack.s
+file runtime_stm32_stackfill_off.go.txt src/runtime/runtime_stm32_stackfill_off.go

@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:  # any branch, by hand (gh workflow run CI --ref BRANCH) before a PR exists
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: constraints.txt
+      - run: python -m pip install -c constraints.txt -e ".[dev]"
+      - run: ruff check cairnmesh
+      - run: python tools/quality_gate.py
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: constraints.txt
+      - run: python -m pip install -c constraints.txt -e ".[secure,serial,dev]"
+      # the packaging test (tests/unit/test_testbed_isolation.py) builds the wheel and sdist and
+      # needs setuptools>=77; a venv on Python 3.12+ has none, and under CI the test fails, not skips
+      - run: python -m pip install "setuptools>=77"
+      - run: python -m pytest -q
+
+  firmware:
+    # Host tests of the Go firmware (wire and behaviour vectors, no board, no
+    # TinyGo): the second implementation of the protocol must pass the same
+    # vectors as the Python one (protocol_spec.md 16).
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firmware
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: firmware/go.mod
+          cache: false
+      - run: go vet ./proto/ ./node/... ./ext/ ./usb/ ./console/ ./keystore/ ./link/ ./tools/... ./testbed/...
+      - run: make test
+      - name: selftest vectors match tests/vectors/lora_v4.json
+        run: |
+          cd cmd/selftest && go generate .
+          git diff --exit-code -- .

@@ -1,0 +1,3384 @@
+{
+ "layer": "one node's relay, sealed frames on air (protocol_spec.md 16.2)",
+ "node": 5,
+ "first_fcnt": 100,
+ "network_key": "30313233343536373839616263646566",
+ "rules": [
+  "time advances event by event; at an instant: timers due before it, then the input, then timers due at it",
+  "every random draw: uniform(a, b) takes (a + b) / 2, random() takes 0.5",
+  "SNR = RSSI - noise_floor (-117 dBm); no channel activity detection; airtime SF7 / 125 kHz / CR 4/5",
+  "the relay's own frames and the layer above's share one FCNT counter from first_fcnt",
+  "expect lists every frame put on air ('tx', with 'preamble' when not 8 symbols), every frame handed up ('up'), every route failure reported ('route_failed') and radio setting change ('radio'), in order"
+ ],
+ "cases": [
+  {
+   "name": "flood_relayed_once_after_rssi_backoff",
+   "spec": "7",
+   "description": "A REQUEST for someone else is relayed once, TX = this node, after a backoff that grows with RSSI; a later copy is a duplicate.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090af4010000420232d610faa162",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "8142090af40100000307444d414a31cb",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.35875,
+     "tx": "8142090af40100000533711a789c24df",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "outward_flood_suppressed_by_three_copies",
+   "spec": "7",
+   "description": "suppress_after (3) other copies of an outward flood heard during the backoff cancel this node's relay.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090af4010000420232d610faa162",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.1,
+     "rx": "8142090af40100000307444d414a31cb",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "8142090af4010000076a4fdbd9f230da",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 7,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.3,
+     "rx": "8142090af40100000b8e3e2e55f8ff99",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 11,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": []
+  },
+  {
+   "name": "reply_follows_the_backbone_and_is_confirmed",
+   "spec": "7",
+   "description": "A REPLY is relayed only by a node that relayed its request; a copy from the next relay confirms it.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090af4010000420232d610faa162",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "8209420abc02000009c1078182645a",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 9,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.8,
+     "rx": "8209420abc020000034b95f24ad665",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 3,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.35875,
+     "tx": "8142090af40100000533711a789c24df",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.441875,
+     "tx": "8209420abc020000054193240ed4af",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "unconfirmed_reply_repeated_once",
+   "spec": "7",
+   "description": "confirm_replies: a relayed REPLY nobody passes on is repeated once, hop_timeout later.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090af4010000420232d610faa162",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "8209420abc02000009c1078182645a",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 9,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.35875,
+     "tx": "8142090af40100000533711a789c24df",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.441875,
+     "tx": "8209420abc020000054193240ed4af",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.941875,
+     "tx": "8209420abc020000054193240ed4af",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "reply_off_the_backbone_dropped",
+   "spec": "7",
+   "description": "guided_replies: a REPLY to a request this node never relayed is not relayed.",
+   "steps": [
+    {
+     "at": 2.0,
+     "rx": "8209420abc02000009c1078182645a",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 9,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": []
+  },
+  {
+   "name": "reply_cancels_the_waiting_request",
+   "spec": "7",
+   "description": "The REPLY heard while this node still waits to relay its request cancels that relay; never having relayed it, the node is not on the backbone and leaves the REPLY alone too.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090af4010000420232d610faa162",
+     "rssi": -60,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.3,
+     "rx": "8209420abc02000009c1078182645a",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 9,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": []
+  },
+  {
+   "name": "frame_for_this_node_goes_up_once",
+   "spec": "7",
+   "description": "A frame addressed to this node goes up (first copy only) and is not relayed.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142050af401000042ea500938bba9db",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "8142050af401000003275db841638586",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "up": "0142050a090100",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "hello_is_one_hop",
+   "spec": "7, 8",
+   "description": "A HELLO goes up (broadcast) and is never relayed.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8507ff0384030000078260c27253",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "up": "0507ff0301",
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "replays_forgeries_and_plain_frames_dropped",
+   "spec": "5, 7, 9",
+   "description": "Per origin a window of the highest FCNT and the 32 below it: an unseen FCNT inside it is fresh, one 32 or more behind is dropped, as are a bad MIC and an unsealed frame; nothing is recorded for them.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090a5802000042365f281d78af17",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.1,
+     "rx": "8142090b4e02000042f8b1050bd8dacf",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 590,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 11,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "8142090cf4010000420232d64c93ded7",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 12,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.3,
+     "rx": "8142090d5902000042f0390245f7247a",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 601,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 13,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     },
+     "invalid": "MIC"
+    },
+    {
+     "at": 1.4,
+     "rx": "0142090e090100",
+     "rssi": -100.0,
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 14,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     },
+     "invalid": "unsealed"
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.35875,
+     "tx": "8142090a58020000051cf811e485d543",
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.45875,
+     "tx": "8142090b4e02000005791149b2987ace",
+     "frame": {
+      "fcnt": 590,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 11,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "own_frame_repeated_without_a_copy",
+   "spec": "7",
+   "description": "A frame this node originates is repeated (hop_retries 1) after hop_timeout unless a copy of it comes back.",
+   "steps": [
+    {
+     "at": 1.0,
+     "send": "0405420301",
+     "frame": {
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 3,
+      "state": 1
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "tx": "840542036400000005a76b7c93fc",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 3,
+      "state": 1
+     }
+    },
+    {
+     "at": 2.5,
+     "tx": "840542036400000005a76b7c93fc",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 3,
+      "state": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "own_frame_acknowledged_by_a_relay_copy",
+   "spec": "7",
+   "description": "Any relay's copy of this node's own frame is its acknowledgement: no repeat.",
+   "steps": [
+    {
+     "at": 1.0,
+     "send": "0405420301",
+     "frame": {
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 3,
+      "state": 1
+     }
+    },
+    {
+     "at": 1.6,
+     "rx": "840542036400000003ca5d07ed19",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 3,
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 3,
+      "state": 1
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "tx": "840542036400000005a76b7c93fc",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 3,
+      "state": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "routed_forward_acknowledged_by_next_hop",
+   "spec": "11.2",
+   "description": "A listed relay forwards at once (jitter); the next hop's copy acknowledges it.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142090af4010000429bd5a4cd581c119cb571",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "c142090af401000007d3c11add1d3280351c1f",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 7,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "c142090af401000005d03129125e580f309dfe",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "routed_repeats_then_route_error",
+   "spec": "11.2",
+   "description": "No acknowledgement: route_retries (3) repeats, route_hop_timeout apart, then a ROUTE_ERROR (BROKEN = next hop) back along the route; the gateway's echo acknowledges it.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142090af4010000429bd5a4cd581c119cb571",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 2.3,
+     "rx": "ca05420a6400000042e0ec3f2a750ef9",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 66,
+      "kind": "ROUTE_ERROR",
+      "class": "RouteErrorFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "broken": 7,
+      "epoch": 9,
+      "route": []
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "c142090af401000005d03129125e580f309dfe",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.316552,
+     "tx": "c142090af401000005d03129125e580f309dfe",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.628104,
+     "tx": "c142090af401000005d03129125e580f309dfe",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.939656,
+     "tx": "c142090af401000005d03129125e580f309dfe",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 2.251208,
+     "tx": "ca05420a6400000005048801b57ba6cb",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "ROUTE_ERROR",
+      "class": "RouteErrorFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "broken": 7,
+      "epoch": 9,
+      "route": []
+     }
+    }
+   ]
+  },
+  {
+   "name": "routed_frame_not_on_route_ignored",
+   "spec": "11.2",
+   "description": "A routed frame that does not list this node is neither relayed nor handed up.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142090af4010000429bd5a4cb581c372edd32",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3,
+       7
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": []
+  },
+  {
+   "name": "routed_retry_answered_with_the_furthest_copy",
+   "spec": "11.2",
+   "description": "Acknowledged, then the previous hop sends again (it missed our copy): answered once with TX = the furthest node heard, which nobody further on takes for a retry.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142090af4010000429bd5a4cd581c119cb571",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "c142090af401000007d3c11add1d3280351c1f",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 7,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "c142090af4010000429bd5a4cd581c119cb571",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "c142090af401000005d03129125e580f309dfe",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.505,
+     "tx": "c142090af401000007d3c11add1d3280351c1f",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 7,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "last_hop_into_gateway_acknowledged_by_echo",
+   "spec": "11.2",
+   "description": "The last relay before the gateway waits for the gateway's echo of the inbound frame (TX = gateway) like any other hop.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c209420abc020000078bbba30354b308e684",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 7,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "rx": "c209420abc020000425112f29edb6504d735",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "c209420abc020000052d9a3fcdc43c72caca",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "skipped_hop_waits_a_slot",
+   "spec": "11.2",
+   "description": "Heard from before the previous hop (a skipped hop): wait one slot per relay in between; that relay's copy then acknowledges ours.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c209420abc020000094b84c709e89d423f02",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 9,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.01,
+     "rx": "c209420abc020000078bbba30354b308e684",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 7,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "c209420abc020000425112f29edb6504d735",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.015,
+     "tx": "c209420abc020000052d9a3fcdc43c72caca",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "routed_frame_for_this_node_goes_up",
+   "spec": "11.2",
+   "description": "A routed request to this node goes up; the answer the layer above hands down goes back on the reversed route and is acknowledged by the next hop's copy.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "send": "4205420a09000301",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "c205420a64000000036236bbec37ef2361",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 3,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "up": "4142050a0901000301",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "target_answers_every_repeat_of_the_last_relay",
+   "spec": "11.2",
+   "description": "The target's answer goes again only when the last relay repeats the request; each repeat heard keeps it answerable for another full repeat cycle (linger_span).",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "send": "4205420a09000301",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.1,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.7,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "up": "4142050a0901000301",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.505,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.105,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.705,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "target_stops_answering_after_retry_cap",
+   "spec": "11.2",
+   "description": "The target sends the answer once and four repeats, five sends in all; a sixth request still reaches it after the fifth send, but it does not answer: route_retries+1 caps the repeats.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "send": "4205420a09000301",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.1,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.7,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 3.3,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 3.9,
+     "rx": "c142050af4010000035bd01fe2f1a2124a34",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "up": "4142050a0901000301",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 3,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.505,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.105,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 2.705,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 3.305,
+     "tx": "c205420a6400000005ef0bc817bab7dcf4",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "probe_relayed_with_own_hop",
+   "spec": "11.3",
+   "description": "A PROBE is passed on once, re-sealed as this node's own frame (its FCNT) with its hop and the link appended, after a wait that is shorter the cheaper the path; no copy from further out: sent once more.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "88420914f401000042e0d79de8e3bc2e",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [],
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.078,
+     "tx": "880509146400000005f8977127aebc439e2cdf",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.111152,
+     "tx": "88050914650000000501d29d17acacd88a3872",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "probe_keeps_the_best_copy",
+   "spec": "11.3",
+   "description": "Copies heard while waiting: the cheapest path (ETX) is the one passed on.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "88420914f401000042e0d79de8e3bc2e",
+     "rssi": -123,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.02,
+     "rx": "880309142c01000003ccf284720242b8ee3b29",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 300,
+      "tx_node": 3,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 3,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.098,
+     "tx": "880509146400000005f897712195a024d934476f2f01",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       },
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.141392,
+     "tx": "88050914650000000501d29d1197b009cd48ac59ec63",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       },
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "probe_passed_on_is_not_repeated",
+   "spec": "11.3",
+   "description": "A copy from further out that lists this node confirms its forward: no second copy.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "88420914f401000042e0d79de8e3bc2e",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.3,
+     "rx": "88070914200300000774475f387a665f87185ea8ba48",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 800,
+      "tx_node": 7,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 7,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       },
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.078,
+     "tx": "880509146400000005f8977127aebc439e2cdf",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "probe_target_answers_the_best_path",
+   "spec": "11.3",
+   "description": "The target collects copies for WINDOW after the first and answers the cheapest path with a routed PROBE_REPLY (back through INNER), which INNER's copy acknowledges.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "88420514f4010000421d5238d3d1edcb",
+     "rssi": -123,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.1,
+     "rx": "880305142c01000003cd1abb62cb4015b2a876",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 300,
+      "tx_node": 3,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 3,
+      "target_id": 5,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.62,
+     "rx": "c90542146400000003fb26522221d3d7428e13ca",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 3,
+      "kind": "PROBE_REPLY",
+      "class": "ProbeReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 20,
+      "links": [
+       {
+        "rssi": -95,
+        "snr": 88
+       },
+       {
+        "rssi": -95,
+        "snr": 88
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.5,
+     "tx": "c90542146400000005217b17bffb86a4e9085bd9",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "PROBE_REPLY",
+      "class": "ProbeReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 20,
+      "links": [
+       {
+        "rssi": -95,
+        "snr": 88
+       },
+       {
+        "rssi": -95,
+        "snr": 88
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "join_relayed_like_a_probe",
+   "spec": "12.2",
+   "description": "A JOIN floods towards the gateway like a probe: this node appends its hop and seals it as its own.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8d0b4202320000000bdc7917f7f72c7c",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 50,
+      "tx_node": 11,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 11,
+      "target_id": 66,
+      "sequence": 2,
+      "origin_id": 11,
+      "window": 10,
+      "hops": [],
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.078,
+     "tx": "8d054202640000000511f2605569439c5326a8",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 2,
+      "origin_id": 11,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.111152,
+     "tx": "8d0542026500000005e17254d9bd936ba400a0",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 2,
+      "origin_id": 11,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "keepalive_moves_after_the_answer_and_reverts",
+   "spec": "15.2",
+   "description": "A KEEPALIVE naming a radio setting: the path moves there once it has passed that keepalive's answer on (here: the gateway's echo), and back to the common setting after radio_timeout (6 s) of silence.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c742091ef4010000424ca7f974ea93abdd63a2",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 26,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.1,
+     "rx": "c742091ef40100000786dfa2c1b52ced67cce2",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 7,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 26,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "c209421ebc020000078bbba30354e8f88423",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 7,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.6,
+     "rx": "c209421ebc020000425112f29edbb081f4a5",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    }
+   ],
+   "end": 12.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "c742091ef401000005b20c85c0f4d541803440",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 26,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.505,
+     "tx": "c209421ebc020000052d9a3fcdc4aa6a155d",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       7,
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.6,
+     "radio": {
+      "channel": 3,
+      "sf": 9
+     }
+    },
+    {
+     "at": 7.6,
+     "radio": {
+      "channel": 0,
+      "sf": 7
+     }
+    }
+   ]
+  },
+  {
+   "name": "wake_net_relayed_with_long_preamble",
+   "spec": "14.3",
+   "description": "WAKE_NET goes up (broadcast) and is relayed with the wake preamble.",
+   "config": {
+    "wake_preamble": 64
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "up": "1042ff28093c",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 64
+    }
+   ]
+  },
+  {
+   "name": "wake_net_repeated_for_a_silent_neighbour",
+   "spec": "14.3",
+   "description": "A neighbour known strong enough (wake_expect) and not heard since: this node sends the WAKE_NET again, wake_copies (3) in all.",
+   "config": {
+    "wake_preamble": 64
+   },
+   "steps": [
+    {
+     "at": 0.5,
+     "rx": "8507ff0384030000078260c27253",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 10.0,
+   "expect": [
+    {
+     "at": 0.5,
+     "up": "0507ff0301",
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1.0,
+     "up": "1042ff28093c",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 64
+    },
+    {
+     "at": 2.98743,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 64
+    },
+    {
+     "at": 4.61611,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 64
+    }
+   ]
+  },
+  {
+   "name": "wake_net_not_repeated_once_the_neighbour_is_heard",
+   "spec": "14.3",
+   "description": "The known neighbour passes it on: no further copy.",
+   "config": {
+    "wake_preamble": 64
+   },
+   "steps": [
+    {
+     "at": 0.5,
+     "rx": "8507ff0384030000078260c27253",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.2,
+     "rx": "9042ff28f4010000077c970ae67d6f",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 7,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 10.0,
+   "expect": [
+    {
+     "at": 0.5,
+     "up": "0507ff0301",
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1.0,
+     "up": "1042ff28093c",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 64
+    }
+   ]
+  },
+  {
+   "name": "dormant_node_hears_only_wake_frames",
+   "spec": "14.3",
+   "description": "Dormant: a flooded REQUEST a CAD look caught is dropped unrecorded; a WAKE_NET is taken (the wake agent then wakes the node).",
+   "config": {
+    "wake_preamble": 64
+   },
+   "asleep": true,
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "8142090af4010000420232d610faa162",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "9042ff28f501000042ce0db5cb4c51",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 2.0,
+     "up": "1042ff28093c",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.35875,
+     "tx": "9042ff28f501000005c485cc87b005",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 64
+    }
+   ]
+  },
+  {
+   "name": "trace_relayed_and_its_answer_carries_our_record",
+   "spec": "11.8",
+   "description": "A relay passes a routed request and its answer on (its route log notes both), then the TRACE asking about them; the target's TRACE_REPLY gets this relay's record appended and goes into the gateway twice, blind.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c142090af4010000429bd5a4cd5ea29a6962",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "c142090af40100000937ad429c2b9e4f7d8f",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 9,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "c209420abc020000094b84c50d24dcfec5",
+     "rssi": -85,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 9,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.7,
+     "rx": "c209420abc020000425112f09a8d07762c",
+     "rssi": -80,
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "cb42091ef50100004257068ac948d20cf42d",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "TRACE",
+      "class": "TraceFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 30,
+      "query_sequence": 10,
+      "query_epoch": 9,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 3.3,
+     "rx": "cc09421ebd020000090c46d0e5ffc21ecad3ef46",
+     "rssi": -85,
+     "frame": {
+      "fcnt": 701,
+      "tx_node": 9,
+      "kind": "TRACE_REPLY",
+      "class": "TraceReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 30,
+      "records": [
+       {
+        "rssi_out": -88,
+        "snr_out": 20,
+        "rssi_back": -86,
+        "out_repeats": 0,
+        "out_state": 1,
+        "back_repeats": 0,
+        "back_state": 1
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "c142090af401000005d031291258757c7315",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.19364,
+     "tx": "c142090af401000005d031291258757c7315",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 1.505,
+     "tx": "c209420abc020000052d9a3dc9d9069205",
+     "frame": {
+      "fcnt": 700,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 9,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 3.005,
+     "tx": "cb42091ef501000005c4690e27240b81b20d",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "TRACE",
+      "class": "TraceFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 30,
+      "query_sequence": 10,
+      "query_epoch": 9,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 3.20388,
+     "tx": "cb42091ef501000005c4690e27240b81b20d",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "TRACE",
+      "class": "TraceFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 30,
+      "query_sequence": 10,
+      "query_epoch": 9,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 3.305,
+     "tx": "cc05421e6400000005b68041dec6350f81fcb5ca6e27f1",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "TRACE_REPLY",
+      "class": "TraceReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 30,
+      "records": [
+       {
+        "rssi_out": -88,
+        "snr_out": 20,
+        "rssi_back": -86,
+        "out_repeats": 0,
+        "out_state": 1,
+        "back_repeats": 0,
+        "back_state": 1
+       },
+       {
+        "rssi_out": -90,
+        "snr_out": 108,
+        "rssi_back": -85,
+        "out_repeats": 1,
+        "out_state": 1,
+        "back_repeats": 0,
+        "back_state": 1
+       }
+      ],
+      "epoch": 9,
+      "route": []
+     }
+    },
+    {
+     "at": 3.371696,
+     "tx": "cc05421e6400000005b68041dec6350f81fcb5ca6e27f1",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "TRACE_REPLY",
+      "class": "TraceReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 30,
+      "records": [
+       {
+        "rssi_out": -88,
+        "snr_out": 20,
+        "rssi_back": -86,
+        "out_repeats": 0,
+        "out_state": 1,
+        "back_repeats": 0,
+        "back_state": 1
+       },
+       {
+        "rssi_out": -90,
+        "snr_out": 108,
+        "rssi_back": -85,
+        "out_repeats": 1,
+        "out_state": 1,
+        "back_repeats": 0,
+        "back_state": 1
+       }
+      ],
+      "epoch": 9,
+      "route": []
+     }
+    }
+   ]
+  },
+  {
+   "name": "trace_target_answers_with_its_record",
+   "spec": "11.8",
+   "description": "The TRACE's target answers along the route back with its own record; a copy from the next node, with its record added, acknowledges it.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "cb42051ff60100000353da55b3d8816b4400",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 502,
+      "tx_node": 3,
+      "kind": "TRACE",
+      "class": "TraceFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 31,
+      "query_sequence": 10,
+      "query_epoch": 9,
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.3,
+     "rx": "cc05421f5802000003c08190780904d094c07cfe0cb1ba",
+     "rssi": -90,
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 3,
+      "kind": "TRACE_REPLY",
+      "class": "TraceReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 31,
+      "records": [
+       {
+        "rssi_out": null,
+        "snr_out": null,
+        "rssi_back": null,
+        "out_repeats": 0,
+        "out_state": 0,
+        "back_repeats": 0,
+        "back_state": 0
+       },
+       {
+        "rssi_out": -90,
+        "snr_out": 12,
+        "rssi_back": null,
+        "out_repeats": 0,
+        "out_state": 0,
+        "back_repeats": 0,
+        "back_state": 0
+       }
+      ],
+      "epoch": 9,
+      "route": []
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.005,
+     "tx": "cc05421f6400000005b6d8d588d76c6290bfc5f2",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "TRACE_REPLY",
+      "class": "TraceReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 31,
+      "records": [
+       {
+        "rssi_out": null,
+        "snr_out": null,
+        "rssi_back": null,
+        "out_repeats": 0,
+        "out_state": 0,
+        "back_repeats": 0,
+        "back_state": 0
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 1.258376,
+     "tx": "cc05421f6400000005b6d8d588d76c6290bfc5f2",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "TRACE_REPLY",
+      "class": "TraceReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 31,
+      "records": [
+       {
+        "rssi_out": null,
+        "snr_out": null,
+        "rssi_back": null,
+        "out_repeats": 0,
+        "out_state": 0,
+        "back_repeats": 0,
+        "back_state": 0
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "routed_probe_passed_on_by_the_next_listed_relay",
+   "spec": "15.1",
+   "description": "A probe along a route: only the next listed relay passes it on, with its own hop; the next relay's copy naming it confirms it.",
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "c8420914f4010000423347d719b4407056ac97",
+     "rssi": -100,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 66,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [],
+      "epoch": 9,
+      "route": [
+       5,
+       7
+      ]
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "c80709148403000007d74b44b5a5e0a1a9578bd74cf587",
+     "rssi": -95,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 7,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 7,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       },
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       }
+      ],
+      "epoch": 9,
+      "route": []
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.025,
+     "tx": "c80509146400000005f494e579ba9c5b47b7edbb01",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       7
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "own_routed_probe_repeated_until_passed_on",
+   "spec": "15.1",
+   "description": "This node's own probe along a route: repeated (route_retries) while the first relay does not pass it on.",
+   "steps": [
+    {
+     "at": 1.0,
+     "send": "4805091509050a0701",
+     "frame": {
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 21,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 9,
+      "route": [
+       7
+      ]
+     }
+    }
+   ],
+   "end": 12.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "tx": "c80509156400000005f4d3e57bdf935a2831",
+     "frame": {
+      "fcnt": 100,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 21,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 9,
+      "route": [
+       7
+      ]
+     }
+    },
+    {
+     "at": 2.022912,
+     "tx": "c805091565000000058efadadb83e3809c1e",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 21,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 9,
+      "route": [
+       7
+      ]
+     }
+    },
+    {
+     "at": 3.045824,
+     "tx": "c8050915660000000585ba6dd8569205f975",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 21,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 9,
+      "route": [
+       7
+      ]
+     }
+    },
+    {
+     "at": 4.068736,
+     "tx": "c80509156700000005e37152101fce727ba7",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 9,
+      "sequence": 21,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 9,
+      "route": [
+       7
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

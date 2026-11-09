@@ -1,0 +1,5547 @@
+{
+ "description": "Behaviour vectors of the layers above the relay (``protocol_spec.md`` section 16.3).",
+ "node": 5,
+ "controller": 66,
+ "first_fcnt": 100,
+ "network_key": "30313233343536373839616263646566",
+ "cases": [
+  {
+   "name": "hello_at_half_an_interval_then_every_interval",
+   "spec": "8",
+   "description": "The first HELLO at a random point of the first interval (midpoint 30 s), then every hello_interval ±15 % (midpoint 60 s); TARGET 0xFF, never repeated.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [],
+   "end": 160.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "silent_neighbour_reported_lost_and_acknowledged",
+   "spec": "8",
+   "description": "A neighbour silent for more than miss_limit (5) intervals is reported LOST after report_delay; the controller's REPLY ends it.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 70.0,
+     "rx": "8503ff01c90000000319a5aec1a5",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 201,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 390.0,
+     "rx": "824205808403000042826c022b2829",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 128,
+      "result": 0,
+      "epoch": 5
+     }
+    }
+   ],
+   "end": 420.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 375.0,
+     "tx": "860542806b00000005935f8e93c5f889",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 376.5,
+     "tx": "860542806b00000005935f8e93c5f889",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "8505ff066c00000005f98fead338",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "unacknowledged_report_repeated_then_abandoned",
+   "spec": "8",
+   "description": "A REPORT nobody acknowledges goes again every report_timeout (15 s), report_retries (3) more times, then is dropped.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 420.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 315.0,
+     "tx": "860542806a00000005c672b56ff27cc8",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 316.5,
+     "tx": "860542806a00000005c672b56ff27cc8",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056b000000054e6d3be3af",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "860542806c00000005739c18ff832a0d",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 331.5,
+     "tx": "860542806c00000005739c18ff832a0d",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 345.0,
+     "tx": "860542806d00000005abed19b74b40d8",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 346.5,
+     "tx": "860542806d00000005abed19b74b40d8",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 360.0,
+     "tx": "860542806e000000050625c8059018aa",
+     "frame": {
+      "fcnt": 110,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 361.5,
+     "tx": "860542806e000000050625c8059018aa",
+     "frame": {
+      "fcnt": 110,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "8505ff066f000000054c6a577823",
+     "frame": {
+      "fcnt": 111,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "report_suppressed_by_another_nodes_report",
+   "spec": "8",
+   "description": "Another node's REPORT about the same subject and event heard during report_delay cancels ours.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 312.0,
+     "rx": "860742282c010000072c268d33c2998f",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 300,
+      "tx_node": 7,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 40,
+      "subject": 3,
+      "event": 0,
+      "epoch": 7
+     }
+    }
+   ],
+   "end": 330.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 312.441875,
+     "tx": "860742282c010000051892bec19c5e4c",
+     "frame": {
+      "fcnt": 300,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 40,
+      "subject": 3,
+      "event": 0,
+      "epoch": 7
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "neighbour_heard_again_reported_recovered",
+   "spec": "8",
+   "description": "A neighbour reported LOST that is heard again is reported RECOVERED (a new sequence).",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 320.0,
+     "rx": "824205808403000042826c022b2829",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 128,
+      "result": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 400.0,
+     "rx": "8503ff09d100000003175d634cdf",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 209,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 9,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 410.0,
+     "rx": "824205818503000042f83bcfdf29f6",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 901,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 129,
+      "result": 0,
+      "epoch": 5
+     }
+    }
+   ],
+   "end": 420.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 315.0,
+     "tx": "860542806a00000005c672b56ff27cc8",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 316.5,
+     "tx": "860542806a00000005c672b56ff27cc8",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056b000000054e6d3be3af",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "8505ff066c00000005f98fead338",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 405.0,
+     "tx": "860542816d00000005abed187f2a2374",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "subject": 3,
+      "event": 1,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 406.5,
+     "tx": "860542816d00000005abed187f2a2374",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "subject": 3,
+      "event": 1,
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "flap_before_the_report_cancels_it",
+   "spec": "8",
+   "description": "Heard again before its LOST report went out: LOST and RECOVERED cancel, nothing is reported.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 312.0,
+     "rx": "8503ff05cd000000030a4156005f",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 205,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 330.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "weak_neighbour_silent_not_reported",
+   "spec": "8",
+   "description": "A neighbour whose smoothed RSSI is below watch_rssi (−118.5 dBm), heard for less than weak_window intervals, is never reported.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "850bff00c80000000b4f64b5bc9a",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 420.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "8505ff066b000000054e2dbe50fa",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "weak_neighbour_watched_by_its_hello_rate",
+   "spec": "8",
+   "description": "A weak neighbour known for weak_window (10) intervals or more is watched on a longer fuse: LOST once silent for the least n with (1 − rate)ⁿ ≤ 1e-4, the rate (HELLOs after the first over the intervals since, the silence included) falling while it stays silent; heard every other interval for 40 min, n settles at 26.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "850bff00c80000000b4f64b5bc9a",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 130.0,
+     "rx": "850bff01c90000000b561501374d",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 201,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 250.0,
+     "rx": "850bff02ca0000000beec55b9b15",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 202,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 370.0,
+     "rx": "850bff03cb0000000b45179138ca",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 203,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 490.0,
+     "rx": "850bff04cc0000000b029788ca26",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 204,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 610.0,
+     "rx": "850bff05cd0000000bfd18c8c1b8",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 205,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 730.0,
+     "rx": "850bff06ce0000000bc715c64e70",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 206,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 850.0,
+     "rx": "850bff07cf0000000bd7463309b5",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 207,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 7,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 970.0,
+     "rx": "850bff08d00000000b0907435c4b",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 208,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 8,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1090.0,
+     "rx": "850bff09d10000000bb789c761a1",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 209,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 9,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1210.0,
+     "rx": "850bff0ad20000000b87bf899d0f",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 210,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 10,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1330.0,
+     "rx": "850bff0bd30000000b048117b521",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 211,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 11,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1450.0,
+     "rx": "850bff0cd40000000bbd6f419941",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 212,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 12,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1570.0,
+     "rx": "850bff0dd50000000b05ae994b3d",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 213,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 13,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1690.0,
+     "rx": "850bff0ed60000000b010bcd09be",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 214,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 14,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1810.0,
+     "rx": "850bff0fd70000000b495ddbd424",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 215,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 15,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1930.0,
+     "rx": "850bff10d80000000b780209ed98",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 216,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 16,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2050.0,
+     "rx": "850bff11d90000000bb30d7d1802",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 217,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 17,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2170.0,
+     "rx": "850bff12da0000000b14af435a0b",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 218,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 18,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2290.0,
+     "rx": "850bff13db0000000b344a5d4571",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 219,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 19,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2410.0,
+     "rx": "850bff14dc0000000bd51b2cdbc7",
+     "rssi": -121.0,
+     "frame": {
+      "fcnt": 220,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 20,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 4000.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "8505ff066b000000054e2dbe50fa",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 450.0,
+     "tx": "8505ff076c00000005f94f962a6b",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 7,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 510.0,
+     "tx": "8505ff086d0000000524d8e5ce9b",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 8,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 570.0,
+     "tx": "8505ff096e00000005f55c94249a",
+     "frame": {
+      "fcnt": 110,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 9,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 630.0,
+     "tx": "8505ff0a6f000000054c66c630ca",
+     "frame": {
+      "fcnt": 111,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 10,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 690.0,
+     "tx": "8505ff0b70000000057085ba4a86",
+     "frame": {
+      "fcnt": 112,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 11,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 750.0,
+     "tx": "8505ff0c7100000005d6930a55d2",
+     "frame": {
+      "fcnt": 113,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 12,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 810.0,
+     "tx": "8505ff0d7200000005cb2476dd0b",
+     "frame": {
+      "fcnt": 114,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 13,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 870.0,
+     "tx": "8505ff0e73000000051e049ae9d3",
+     "frame": {
+      "fcnt": 115,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 14,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 930.0,
+     "tx": "8505ff0f74000000057bf42ae8e5",
+     "frame": {
+      "fcnt": 116,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 15,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 990.0,
+     "tx": "8505ff107500000005bda8b0c53a",
+     "frame": {
+      "fcnt": 117,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 16,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1050.0,
+     "tx": "8505ff1176000000055660cce46c",
+     "frame": {
+      "fcnt": 118,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 17,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1110.0,
+     "tx": "8505ff1277000000056c0db1d607",
+     "frame": {
+      "fcnt": 119,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 18,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1170.0,
+     "tx": "8505ff137800000005beed50cc12",
+     "frame": {
+      "fcnt": 120,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 19,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1230.0,
+     "tx": "8505ff1479000000057cd78f9047",
+     "frame": {
+      "fcnt": 121,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 20,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1290.0,
+     "tx": "8505ff157a00000005073ee997ce",
+     "frame": {
+      "fcnt": 122,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 21,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1350.0,
+     "tx": "8505ff167b000000052b164a316c",
+     "frame": {
+      "fcnt": 123,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 22,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1410.0,
+     "tx": "8505ff177c000000058a84c117a0",
+     "frame": {
+      "fcnt": 124,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 23,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1470.0,
+     "tx": "8505ff187d00000005199cd077bb",
+     "frame": {
+      "fcnt": 125,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 24,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1530.0,
+     "tx": "8505ff197e00000005f2727e0c9d",
+     "frame": {
+      "fcnt": 126,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 25,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1590.0,
+     "tx": "8505ff1a7f0000000540e8ef6a6d",
+     "frame": {
+      "fcnt": 127,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 26,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1650.0,
+     "tx": "8505ff1b80000000057d576fb220",
+     "frame": {
+      "fcnt": 128,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 27,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1710.0,
+     "tx": "8505ff1c81000000053a4b7554f6",
+     "frame": {
+      "fcnt": 129,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 28,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1770.0,
+     "tx": "8505ff1d820000000573f5650c11",
+     "frame": {
+      "fcnt": 130,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 29,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1830.0,
+     "tx": "8505ff1e83000000051aecab3867",
+     "frame": {
+      "fcnt": 131,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 30,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1890.0,
+     "tx": "8505ff1f84000000052fcd767410",
+     "frame": {
+      "fcnt": 132,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 31,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 1950.0,
+     "tx": "8505ff2085000000053198ffb11a",
+     "frame": {
+      "fcnt": 133,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 32,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2010.0,
+     "tx": "8505ff2186000000052ea2739365",
+     "frame": {
+      "fcnt": 134,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 33,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2070.0,
+     "tx": "8505ff228700000005f07dd512e9",
+     "frame": {
+      "fcnt": 135,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 34,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2130.0,
+     "tx": "8505ff2388000000054584600ec4",
+     "frame": {
+      "fcnt": 136,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 35,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2190.0,
+     "tx": "8505ff2489000000056748e787e3",
+     "frame": {
+      "fcnt": 137,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 36,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2250.0,
+     "tx": "8505ff258a00000005c593559264",
+     "frame": {
+      "fcnt": 138,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 37,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2310.0,
+     "tx": "8505ff268b00000005e119527170",
+     "frame": {
+      "fcnt": 139,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 38,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2370.0,
+     "tx": "8505ff278c00000005c9c37e4e16",
+     "frame": {
+      "fcnt": 140,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 39,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2430.0,
+     "tx": "8505ff288d00000005274a5cf9ca",
+     "frame": {
+      "fcnt": 141,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 40,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2490.0,
+     "tx": "8505ff298e00000005437099bc38",
+     "frame": {
+      "fcnt": 142,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 41,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2550.0,
+     "tx": "8505ff2a8f0000000541962e4761",
+     "frame": {
+      "fcnt": 143,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 42,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2610.0,
+     "tx": "8505ff2b9000000005ab015e79a8",
+     "frame": {
+      "fcnt": 144,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 43,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2670.0,
+     "tx": "8505ff2c9100000005c3d98e4c51",
+     "frame": {
+      "fcnt": 145,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 44,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2730.0,
+     "tx": "8505ff2d9200000005ec1671e328",
+     "frame": {
+      "fcnt": 146,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 45,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2790.0,
+     "tx": "8505ff2e9300000005c86ffaaedf",
+     "frame": {
+      "fcnt": 147,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 46,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2850.0,
+     "tx": "8505ff2f940000000516b3868e04",
+     "frame": {
+      "fcnt": 148,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 47,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2910.0,
+     "tx": "8505ff309500000005701a074d2a",
+     "frame": {
+      "fcnt": 149,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 48,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2970.0,
+     "tx": "8505ff319600000005895b361a90",
+     "frame": {
+      "fcnt": 150,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 49,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3030.0,
+     "tx": "8505ff329700000005469cda511e",
+     "frame": {
+      "fcnt": 151,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 50,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3090.0,
+     "tx": "8505ff339800000005d5118f3a35",
+     "frame": {
+      "fcnt": 152,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 51,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3150.0,
+     "tx": "8505ff34990000000585346a3fce",
+     "frame": {
+      "fcnt": 153,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 52,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3210.0,
+     "tx": "8505ff359a00000005e169ac74e9",
+     "frame": {
+      "fcnt": 154,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 53,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3270.0,
+     "tx": "8505ff369b000000053a0772122d",
+     "frame": {
+      "fcnt": 155,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 54,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3330.0,
+     "tx": "8505ff379c00000005c4f288d519",
+     "frame": {
+      "fcnt": 156,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 55,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3390.0,
+     "tx": "8505ff389d00000005cecc26fe6f",
+     "frame": {
+      "fcnt": 157,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 56,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3450.0,
+     "tx": "8505ff399e000000056259301306",
+     "frame": {
+      "fcnt": 158,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 57,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3510.0,
+     "tx": "8505ff3a9f00000005aea6a9b224",
+     "frame": {
+      "fcnt": 159,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 58,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3570.0,
+     "tx": "8505ff3ba0000000055130f08deb",
+     "frame": {
+      "fcnt": 160,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 59,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3630.0,
+     "tx": "8505ff3ca1000000051a276f8b76",
+     "frame": {
+      "fcnt": 161,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 60,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3690.0,
+     "tx": "8505ff3da200000005425d443765",
+     "frame": {
+      "fcnt": 162,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 61,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3750.0,
+     "tx": "8505ff3ea300000005485425faff",
+     "frame": {
+      "fcnt": 163,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 62,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3810.0,
+     "tx": "8505ff3fa400000005a8d850c380",
+     "frame": {
+      "fcnt": 164,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 63,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3870.0,
+     "tx": "8505ff40a500000005c920ddafcb",
+     "frame": {
+      "fcnt": 165,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 64,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3930.0,
+     "tx": "8505ff41a60000000508c620c952",
+     "frame": {
+      "fcnt": 166,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 65,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3975.0,
+     "tx": "86054280a700000005ad29f0d7a1a69e",
+     "frame": {
+      "fcnt": 167,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3976.5,
+     "tx": "86054280a700000005ad29f0d7a1a69e",
+     "frame": {
+      "fcnt": 167,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3990.0,
+     "tx": "8505ff42a800000005af5893cb34",
+     "frame": {
+      "fcnt": 168,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 66,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3990.0,
+     "tx": "86054280a900000005c8f41889124f66",
+     "frame": {
+      "fcnt": 169,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3991.5,
+     "tx": "86054280a900000005c8f41889124f66",
+     "frame": {
+      "fcnt": 169,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "full_table_forgets_the_least_recently_heard",
+   "spec": "8",
+   "description": "With the table full (max_neighbours, 2 here), a new neighbour replaces the one heard least recently (not the one first heard), which is then never reported.",
+   "config": {
+    "hello_interval": 60.0,
+    "watch": {
+     "max_neighbours": 2
+    }
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 11.0,
+     "rx": "8507ff002c01000007acf7823dca",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 300,
+      "tx_node": 7,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 7,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 12.0,
+     "rx": "8503ff01c90000000319a5aec1a5",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 201,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 13.0,
+     "rx": "850bff00900100000bf96941e884",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 400,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 330.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 317.0,
+     "tx": "860542806a00000005c672b56ff27cc8",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 318.0,
+     "tx": "860542816b0000000593578e721ab045",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 318.5,
+     "tx": "860542806a00000005c672b56ff27cc8",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 319.5,
+     "tx": "860542816b0000000593578e721ab045",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056c00000005f96f6fad39",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "smoothed_rssi_decides_who_is_watched",
+   "spec": "8",
+   "description": "The watch threshold applies to the smoothed RSSI (EWMA, new HELLO weight 0.25): −115 then −125 dBm smooth to −117.5, above watch_rssi, so its silence is reported.",
+   "config": {
+    "hello_interval": 60.0
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -115.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 70.0,
+     "rx": "8503ff01c90000000319a5aec1a5",
+     "rssi": -125.0,
+     "frame": {
+      "fcnt": 201,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ],
+   "end": 390.0,
+   "expect": [
+    {
+     "at": 30.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 90.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 150.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 210.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 270.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 330.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 375.0,
+     "tx": "860542806b00000005935f8e93c5f889",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 376.5,
+     "tx": "860542806b00000005935f8e93c5f889",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "8505ff066c00000005f98fead338",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 390.0,
+     "tx": "860542806d00000005abed19b74b40d8",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 3,
+      "event": 0,
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "weak_neighbour_rate_ignores_the_time_asleep",
+   "spec": "8, 14.2",
+   "description": "Woken, a weak neighbour's start moves on with its last HELLO (resume): its rate counts awake intervals only, so it is watched and reported LOST after 9 intervals; counted over the 29 min asleep, its rate would be too low to watch (n > max_miss).",
+   "config": {
+    "hello_interval": 60.0,
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {
+     "net_awake_quota": 100000.0
+    }
+   },
+   "steps": [
+    {
+     "at": 10.0,
+     "rx": "9042ff28f401000042a2e2ee230727",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 255,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 20.0,
+     "rx": "850bff00900100000bf96941e884",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 400,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 80.0,
+     "rx": "850bff01910100000b55cf547886",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 401,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 140.0,
+     "rx": "850bff02920100000b74671db7be",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 402,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 200.0,
+     "rx": "850bff03930100000b9ca8908ce2",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 403,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 260.0,
+     "rx": "850bff04940100000b4112dfb632",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 404,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2000.0,
+     "rx": "9042ff29f501000042cece6c61dc30",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 255,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2010.0,
+     "rx": "850bff00950100000bcefa8f2943",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 405,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2070.0,
+     "rx": "850bff01960100000bbc6c585a23",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 406,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2130.0,
+     "rx": "850bff02970100000bdfda398cc8",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 407,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2190.0,
+     "rx": "850bff03980100000ba45afaf49d",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 408,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2240.0,
+     "rx": "9042ff2af601000042f379dd771aa1",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 502,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 42,
+      "lease": 255,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2250.0,
+     "rx": "850bff04990100000bd581a48ac4",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 409,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2310.0,
+     "rx": "850bff059a0100000bfd36a2ae98",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 410,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2370.0,
+     "rx": "850bff069b0100000b4cc9f2991f",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 411,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2430.0,
+     "rx": "850bff079c0100000ba6e2ef473f",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 412,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 7,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2480.0,
+     "rx": "9042ff2bf70100004206098bcc3b46",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 503,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 43,
+      "lease": 255,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2490.0,
+     "rx": "850bff089d0100000b597e220ddc",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 413,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 8,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2550.0,
+     "rx": "850bff099e0100000bbd362f9a78",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 414,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 9,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2610.0,
+     "rx": "850bff0a9f0100000b08717f7254",
+     "rssi": -122.0,
+     "frame": {
+      "fcnt": 415,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 10,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2720.0,
+     "rx": "9042ff2cf80100004262de72297120",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 504,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 44,
+      "lease": 255,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2960.0,
+     "rx": "9042ff2df9010000424907ed52f9c6",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 505,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 45,
+      "lease": 255,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 3200.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 10.0,
+     "dormant": false
+    },
+    {
+     "at": 10.35875,
+     "tx": "9042ff28f40100000562700a23152f",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 255,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 40.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 100.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 160.0,
+     "tx": "8505ff02670000000543a33eef43",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 2,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 220.0,
+     "tx": "8505ff0368000000055c6a30a7a9",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 3,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 265.0,
+     "dormant": true
+    },
+    {
+     "at": 2000.0,
+     "dormant": false
+    },
+    {
+     "at": 2000.35875,
+     "tx": "9042ff29f501000005c44607931cc6",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 255,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 2030.0,
+     "tx": "8505ff04690000000552e57a456b",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 4,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2090.0,
+     "tx": "8505ff056a000000052ee2c26bf1",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 5,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2150.0,
+     "tx": "8505ff066b000000054e2dbe50fa",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 6,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2210.0,
+     "tx": "8505ff076c00000005f94f962a6b",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 7,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2240.35875,
+     "tx": "9042ff2af60100000519951ac6013d",
+     "frame": {
+      "fcnt": 502,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 42,
+      "lease": 255,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 2270.0,
+     "tx": "8505ff086d0000000524d8e5ce9b",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 8,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2330.0,
+     "tx": "8505ff096e00000005f55c94249a",
+     "frame": {
+      "fcnt": 110,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 9,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2390.0,
+     "tx": "8505ff0a6f000000054c66c630ca",
+     "frame": {
+      "fcnt": 111,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 10,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2450.0,
+     "tx": "8505ff0b70000000057085ba4a86",
+     "frame": {
+      "fcnt": 112,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 11,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2480.35875,
+     "tx": "9042ff2bf701000005b481657480aa",
+     "frame": {
+      "fcnt": 503,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 43,
+      "lease": 255,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 2510.0,
+     "tx": "8505ff0c7100000005d6930a55d2",
+     "frame": {
+      "fcnt": 113,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 12,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2570.0,
+     "tx": "8505ff0d7200000005cb2476dd0b",
+     "frame": {
+      "fcnt": 114,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 13,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2630.0,
+     "tx": "8505ff0e73000000051e049ae9d3",
+     "frame": {
+      "fcnt": 115,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 14,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2690.0,
+     "tx": "8505ff0f74000000057bf42ae8e5",
+     "frame": {
+      "fcnt": 116,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 15,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2720.35875,
+     "tx": "9042ff2cf801000005f1b89eb4cbd4",
+     "frame": {
+      "fcnt": 504,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 44,
+      "lease": 255,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 2750.0,
+     "tx": "8505ff107500000005bda8b0c53a",
+     "frame": {
+      "fcnt": 117,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 16,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2810.0,
+     "tx": "8505ff1176000000055660cce46c",
+     "frame": {
+      "fcnt": 118,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 17,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2870.0,
+     "tx": "8505ff1277000000056c0db1d607",
+     "frame": {
+      "fcnt": 119,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 18,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2930.0,
+     "tx": "8505ff137800000005beed50cc12",
+     "frame": {
+      "fcnt": 120,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 19,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 2960.35875,
+     "tx": "9042ff2df90100000544bd18294f62",
+     "frame": {
+      "fcnt": 505,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 45,
+      "lease": 255,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 2990.0,
+     "tx": "8505ff1479000000057cd78f9047",
+     "frame": {
+      "fcnt": 121,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 20,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3050.0,
+     "tx": "8505ff157a00000005073ee997ce",
+     "frame": {
+      "fcnt": 122,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 21,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3110.0,
+     "tx": "8505ff167b000000052b164a316c",
+     "frame": {
+      "fcnt": 123,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 22,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3155.0,
+     "tx": "860542807c00000005110089d89d1306",
+     "frame": {
+      "fcnt": 124,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3156.5,
+     "tx": "860542807c00000005110089d89d1306",
+     "frame": {
+      "fcnt": 124,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3170.0,
+     "tx": "8505ff177d0000000519bc2c8fd4",
+     "frame": {
+      "fcnt": 125,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 23,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 3170.0,
+     "tx": "860542807e000000057b816efc632756",
+     "frame": {
+      "fcnt": 126,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3171.5,
+     "tx": "860542807e000000057b816efc632756",
+     "frame": {
+      "fcnt": 126,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3185.0,
+     "tx": "860542807f000000053b2b1c7d1dd21f",
+     "frame": {
+      "fcnt": 127,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3186.5,
+     "tx": "860542807f000000053b2b1c7d1dd21f",
+     "frame": {
+      "fcnt": 127,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 3200.0,
+     "tx": "8605428080000000050a4f368956eed9",
+     "frame": {
+      "fcnt": 128,
+      "tx_node": 5,
+      "kind": "REPORT",
+      "class": "ReportFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "subject": 11,
+      "event": 0,
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "join_after_half_the_spread_and_acknowledged",
+   "spec": "12.3",
+   "description": "JOIN at a random point of join_spread (midpoint 15 s), WIN join_window; the gateway's routed REPLY echoing its id ends it.",
+   "config": {
+    "discovery": {}
+   },
+   "steps": [
+    {
+     "at": 16.0,
+     "rx": "c24205808403000042f6f51a559d101b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 128,
+      "result": 0,
+      "epoch": 5,
+      "route": []
+     }
+    }
+   ],
+   "end": 200.0,
+   "expect": [
+    {
+     "at": 15.0,
+     "tx": "8d0542806500000005ed7c547496470b",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 16.0,
+     "tx": "c24205808403000005e1b5362aae1a81",
+     "frame": {
+      "fcnt": 900,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 128,
+      "result": 0,
+      "epoch": 5,
+      "route": []
+     }
+    },
+    {
+     "at": 16.022912,
+     "tx": "8d0542806600000005cb2fea4eefaaa1",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "unanswered_join_backs_off_with_fresh_ids",
+   "spec": "12.3",
+   "description": "Unanswered, JOIN again with a new message id after join_backoff, doubling from 30 s up to 300 s.",
+   "config": {
+    "discovery": {}
+   },
+   "steps": [],
+   "end": 700.0,
+   "expect": [
+    {
+     "at": 15.0,
+     "tx": "8d0542806500000005ed7c547496470b",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 16.022912,
+     "tx": "8d0542806600000005cb2fea4eefaaa1",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 45.0,
+     "tx": "8d054281670000000569bf4e1836582a",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 46.022912,
+     "tx": "8d0542816800000005da108d2b4ad923",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 105.0,
+     "tx": "8d0542826900000005d5d07bc0b38758",
+     "frame": {
+      "fcnt": 105,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 130,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 106.022912,
+     "tx": "8d0542826a000000057f948a679262ba",
+     "frame": {
+      "fcnt": 106,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 130,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 225.0,
+     "tx": "8d0542836b000000057ab90f769f1193",
+     "frame": {
+      "fcnt": 107,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 131,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 226.022912,
+     "tx": "8d0542836c00000005c06dc4e85d954b",
+     "frame": {
+      "fcnt": 108,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 131,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 465.0,
+     "tx": "8d0542846d00000005d4c6126d849174",
+     "frame": {
+      "fcnt": 109,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 132,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 466.022912,
+     "tx": "8d0542846e00000005cfbb4dc7add943",
+     "frame": {
+      "fcnt": 110,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 132,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "another_join_holds_ours",
+   "spec": "12.3",
+   "description": "join_quiet: another node's JOIN heard pushes ours back by 3 s plus as much again at random (midpoint 4.5 s).",
+   "config": {
+    "discovery": {}
+   },
+   "steps": [
+    {
+     "at": 14.0,
+     "rx": "8d0742322c0100000748655e7a782986",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 300,
+      "tx_node": 7,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 50,
+      "origin_id": 7,
+      "window": 10,
+      "hops": [],
+      "epoch": 7
+     }
+    }
+   ],
+   "end": 30.0,
+   "expect": [
+    {
+     "at": 14.078,
+     "tx": "8d0542326500000005ef7e54d983bbac6d5a61",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 50,
+      "origin_id": 7,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -90,
+         "snr": 108
+        }
+       }
+      ],
+      "epoch": 7
+     }
+    },
+    {
+     "at": 15.111152,
+     "tx": "8d0542326600000005c92dea5861e36e9cc2f2",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 50,
+      "origin_id": 7,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -90,
+         "snr": 108
+        }
+       }
+      ],
+      "epoch": 7
+     }
+    },
+    {
+     "at": 18.5,
+     "tx": "8d054280670000000569bf4e724e1b5f",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    },
+    {
+     "at": 19.522912,
+     "tx": "8d0542806800000005da108d13caa3dd",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 10,
+      "hops": [],
+      "epoch": 5
+     }
+    }
+   ]
+  },
+  {
+   "name": "scan_answered_along_its_path_with_neighbours",
+   "spec": "12.3",
+   "description": "A DISCOVER is answered once, after its window and at a random point of its SPREAD, back along its path; neighbours are the scan copies' senders and the HELLO table's strongest, not the parent; the answer stands in for the JOIN.",
+   "config": {
+    "hello_interval": 60.0,
+    "discovery": {}
+   },
+   "steps": [
+    {
+     "at": 5.0,
+     "rx": "850bff00900100000bf96941e884",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 400,
+      "tx_node": 11,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 11,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 10.0,
+     "rx": "8e03ff3cd200000003491d1814d596fef5836f96",
+     "rssi": -85.0,
+     "frame": {
+      "fcnt": 210,
+      "tx_node": 3,
+      "kind": "DISCOVER",
+      "class": "DiscoverFrame",
+      "sender_id": 3,
+      "target_id": 255,
+      "sequence": 60,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -80,
+         "snr": 100
+        }
+       }
+      ],
+      "epoch": 9,
+      "spread": 20
+     }
+    },
+    {
+     "at": 10.2,
+     "rx": "8e07ff3c3601000007dac40dc5d30f4734a78a575a6c20",
+     "rssi": -95.0,
+     "frame": {
+      "fcnt": 310,
+      "tx_node": 7,
+      "kind": "DISCOVER",
+      "class": "DiscoverFrame",
+      "sender_id": 7,
+      "target_id": 255,
+      "sequence": 60,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -80,
+         "snr": 100
+        }
+       },
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -90,
+         "snr": 60
+        }
+       }
+      ],
+      "epoch": 9,
+      "spread": 20
+     }
+    }
+   ],
+   "end": 80.0,
+   "expect": [
+    {
+     "at": 10.078,
+     "tx": "8e05ff3c6500000005214ef1e54d1b55731468b8b51509",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "DISCOVER",
+      "class": "DiscoverFrame",
+      "sender_id": 5,
+      "target_id": 255,
+      "sequence": 60,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -80,
+         "snr": 100
+        }
+       },
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -85,
+         "snr": 127
+        }
+       }
+      ],
+      "epoch": 9,
+      "spread": 20
+     }
+    },
+    {
+     "at": 11.121392,
+     "tx": "8e05ff3c6600000005aad500be9fd2dbe064a3d9a70c24",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "DISCOVER",
+      "class": "DiscoverFrame",
+      "sender_id": 5,
+      "target_id": 255,
+      "sequence": 60,
+      "origin_id": 66,
+      "window": 10,
+      "hops": [
+       {
+        "node_id": 3,
+        "link": {
+         "rssi": -80,
+         "snr": 100
+        }
+       },
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -85,
+         "snr": 127
+        }
+       }
+      ],
+      "epoch": 9,
+      "spread": 20
+     }
+    },
+    {
+     "at": 13.0,
+     "tx": "cf05423c670000000573b30f6e5aa270c5997793deb946a76c6b22",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "DISCOVER_REPLY",
+      "class": "DiscoverReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 60,
+      "state": 1,
+      "links": [
+       {
+        "rssi": -80,
+        "snr": 100
+       },
+       {
+        "rssi": -85,
+        "snr": 127
+       }
+      ],
+      "neighbours": [
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       },
+       {
+        "node_id": 11,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 13.240448,
+     "tx": "cf05423c670000000573b30f6e5aa270c5997793deb946a76c6b22",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "DISCOVER_REPLY",
+      "class": "DiscoverReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 60,
+      "state": 1,
+      "links": [
+       {
+        "rssi": -80,
+        "snr": 100
+       },
+       {
+        "rssi": -85,
+        "snr": 127
+       }
+      ],
+      "neighbours": [
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       },
+       {
+        "node_id": 11,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 13.514304,
+     "tx": "cf05423c670000000573b30f6e5aa270c5997793deb946a76c6b22",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "DISCOVER_REPLY",
+      "class": "DiscoverReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 60,
+      "state": 1,
+      "links": [
+       {
+        "rssi": -80,
+        "snr": 100
+       },
+       {
+        "rssi": -85,
+        "snr": 127
+       }
+      ],
+      "neighbours": [
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       },
+       {
+        "node_id": 11,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 13.78816,
+     "tx": "cf05423c670000000573b30f6e5aa270c5997793deb946a76c6b22",
+     "frame": {
+      "fcnt": 103,
+      "tx_node": 5,
+      "kind": "DISCOVER_REPLY",
+      "class": "DiscoverReplyFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 60,
+      "state": 1,
+      "links": [
+       {
+        "rssi": -80,
+        "snr": 100
+       },
+       {
+        "rssi": -85,
+        "snr": 127
+       }
+      ],
+      "neighbours": [
+       {
+        "node_id": 7,
+        "link": {
+         "rssi": -95,
+         "snr": 88
+        }
+       },
+       {
+        "node_id": 11,
+        "link": {
+         "rssi": -100,
+         "snr": 68
+        }
+       }
+      ],
+      "epoch": 9,
+      "route": [
+       3
+      ]
+     }
+    },
+    {
+     "at": 30.0,
+     "tx": "8505ff0068000000055c42202988",
+     "frame": {
+      "fcnt": 104,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    }
+   ]
+  },
+  {
+   "name": "boot_in_a_sleeping_network_sends_a_wake_join",
+   "spec": "14.2, 12.3",
+   "description": "Q22: a node booting dormant stays awake for join_spread + window + 15 s, its JOIN in that time is a wake JOIN (PROBE_WAKE, long preamble); then it samples.",
+   "config": {
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {},
+    "discovery": {}
+   },
+   "steps": [],
+   "end": 120.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 0.0,
+     "dormant": false
+    },
+    {
+     "at": 15.0,
+     "tx": "8d0542806500000005ed7cd440c1ccc4",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "origin_id": 5,
+      "window": 138,
+      "hops": [],
+      "epoch": 5
+     },
+     "preamble": 491
+    },
+    {
+     "at": 45.0,
+     "tx": "8d0542816600000005cb2f6a10169b79",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "JOIN",
+      "class": "JoinFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 129,
+      "origin_id": 5,
+      "window": 138,
+      "hops": [],
+      "epoch": 5
+     },
+     "preamble": 491
+    },
+    {
+     "at": 45.5,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "wake_net_wakes_for_its_lease_then_samples",
+   "spec": "14.2",
+   "description": "A WAKE_NET wakes a dormant node until its LEASE (paid from the awake budget); it is relayed with the long preamble; the node samples again once the lease is over and the relay has nothing left.",
+   "config": {
+    "hello_interval": 60.0,
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 100.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 200.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 130.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 160.0,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "sleep_net_ends_the_lease",
+   "spec": "14.2",
+   "description": "SLEEP_NET ends the lease at once; the node passes it on first.",
+   "config": {
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 100.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 110.0,
+     "rx": "9142ff29f501000042387403bcb4",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "SLEEP_NET",
+      "class": "SleepNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 200.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 110.35875,
+     "tx": "9142ff29f50100000585b1670952",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "SLEEP_NET",
+      "class": "SleepNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 110.35875,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "fourth_wake_within_the_period_refused",
+   "spec": "14.2",
+   "description": "At most max_wakes (3) WAKE_NET per wake_period (60 s) are honoured; the fourth neither wakes nor is relayed.",
+   "config": {
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 100.0,
+     "rx": "9042ff28f401000042a21c980adba1",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 103.0,
+     "rx": "9042ff29f501000042ce306d104317",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 106.0,
+     "rx": "9042ff2af601000042f387f8d09d08",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 502,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 42,
+      "lease": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 109.0,
+     "rx": "9042ff2bf70100004206f7392914bb",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 503,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 43,
+      "lease": 1,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 140.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.35875,
+     "tx": "9042ff28f401000005628efda41a31",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 1,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 102.424678,
+     "dormant": true
+    },
+    {
+     "at": 103.0,
+     "dormant": false
+    },
+    {
+     "at": 103.35875,
+     "tx": "9042ff29f501000005c4b8ca48fa0d",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 1,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 105.424678,
+     "dormant": true
+    },
+    {
+     "at": 106.0,
+     "dormant": false
+    },
+    {
+     "at": 106.35875,
+     "tx": "9042ff2af601000005196b90ad8c90",
+     "frame": {
+      "fcnt": 502,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 42,
+      "lease": 1,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 108.424678,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "awake_budget_cuts_the_lease",
+   "spec": "14.2",
+   "description": "WAKE_NET leases draw on net_awake_quota (20 s here): the lease is cut to what is left, and with nothing left the next is refused.",
+   "config": {
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {
+     "net_awake_quota": 20.0
+    }
+   },
+   "steps": [
+    {
+     "at": 100.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 130.0,
+     "rx": "9042ff29f501000042ce0dfcfe19df",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 60,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 200.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 120.0,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "keepalive_through_the_node_holds_it_awake",
+   "spec": "14.2",
+   "description": "A routed KEEPALIVE through the node holds it awake for the keepalive's LEASE + hold (5 s) past the network lease.",
+   "config": {
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 100.0,
+     "rx": "9042ff28f401000042a217f78884cb",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 10,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 105.0,
+     "rx": "c742071ef5010000421dfc305b1e05987d78",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 7,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 0,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 105.5,
+     "rx": "c207421e58020000071701046491807a85",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 7,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    }
+   ],
+   "end": 200.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.35875,
+     "tx": "9042ff28f4010000056285230e0499",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 10,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 105.005,
+     "tx": "c742071ef5010000059946dc0044f66352e1",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 7,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 0,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 105.19364,
+     "tx": "c742071ef5010000059946dc0044f66352e1",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 7,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 0,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 105.38228,
+     "tx": "c742071ef5010000059946dc0044f66352e1",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "KEEPALIVE",
+      "class": "KeepaliveFrame",
+      "sender_id": 66,
+      "target_id": 7,
+      "sequence": 30,
+      "lease": 20,
+      "epoch": 9,
+      "radio": 0,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 105.505,
+     "tx": "c207421e58020000055d29ee8e07143995",
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 105.725096,
+     "tx": "c207421e58020000055d29ee8e07143995",
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 105.945192,
+     "tx": "c207421e58020000055d29ee8e07143995",
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 106.165288,
+     "tx": "c207421e58020000055d29ee8e07143995",
+     "frame": {
+      "fcnt": 600,
+      "tx_node": 5,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 7,
+      "target_id": 66,
+      "sequence": 30,
+      "result": 0,
+      "epoch": 9,
+      "route": [
+       5
+      ]
+     }
+    },
+    {
+     "at": 130.0,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "wake_probe_wakes_for_its_window",
+   "spec": "14.2",
+   "description": "A wake probe (PROBE_WAKE) wakes the node for its window + probe_hold (3 s); it is passed on with the long preamble.",
+   "config": {
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 100.0,
+     "rx": "88420714f4010000429f381b5fd922ab",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 66,
+      "target_id": 7,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 138,
+      "hops": [],
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 140.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.078,
+     "tx": "880507146500000005f74df86039410cf9edd8",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "PROBE",
+      "class": "ProbeFrame",
+      "sender_id": 5,
+      "target_id": 7,
+      "sequence": 20,
+      "origin_id": 66,
+      "window": 138,
+      "hops": [
+       {
+        "node_id": 5,
+        "link": {
+         "rssi": -90,
+         "snr": 108
+        }
+       }
+      ],
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 103.5,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "woken_neighbour_table_resumes",
+   "spec": "14.2, 8",
+   "description": "Silence while dormant is not silence: woken, every neighbour counts as heard at the wake-up, and the first HELLO goes within one interval.",
+   "config": {
+    "hello_interval": 60.0,
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 50.0,
+     "rx": "9042ff28f401000042a2038391c734",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 30,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 60.0,
+     "rx": "8503ff00c80000000350a4f3348b",
+     "rssi": -90.0,
+     "frame": {
+      "fcnt": 200,
+      "tx_node": 3,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 3,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 700.0,
+     "rx": "9042ff29f501000042ce49a6e05880",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 120,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 830.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 50.0,
+     "dormant": false
+    },
+    {
+     "at": 50.35875,
+     "tx": "9042ff28f40100000562912c8ffe27",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 30,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 80.0,
+     "dormant": true
+    },
+    {
+     "at": 700.0,
+     "dormant": false
+    },
+    {
+     "at": 700.35875,
+     "tx": "9042ff29f501000005c4c113bcba22",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 120,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 702.424678,
+     "tx": "9042ff29f501000005c4c113bcba22",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 120,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 704.490606,
+     "tx": "9042ff29f501000005c4c113bcba22",
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 41,
+      "lease": 120,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 730.0,
+     "tx": "8505ff006500000005cda991e8a6",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 790.0,
+     "tx": "8505ff0166000000056e15b4f15f",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 1,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 820.0,
+     "dormant": true
+    }
+   ]
+  },
+  {
+   "name": "event_raised_dormant_goes_out_once_woken",
+   "spec": "14.2, 19",
+   "description": "A module event raised while dormant waits; woken, it goes out within wake_spread (midpoint 15.5 s) and its REPLY ends it; it shares the REPORTs' sequence counter.",
+   "config": {
+    "hello_interval": 60.0,
+    "relay": {
+     "wake_preamble": 491
+    },
+    "wake": {}
+   },
+   "steps": [
+    {
+     "at": 40.0,
+     "notify": 7
+    },
+    {
+     "at": 100.0,
+     "rx": "9042ff28f401000042a2212dfded9b",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 66,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 120.0,
+     "rx": "82420580f5010000427e3856cc7732",
+     "rssi": -100.0,
+     "frame": {
+      "fcnt": 501,
+      "tx_node": 66,
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 5,
+      "sequence": 128,
+      "result": 0,
+      "epoch": 5
+     }
+    }
+   ],
+   "end": 200.0,
+   "expect": [
+    {
+     "at": 0.0,
+     "dormant": true
+    },
+    {
+     "at": 100.0,
+     "dormant": false
+    },
+    {
+     "at": 100.35875,
+     "tx": "9042ff28f40100000562b316762189",
+     "frame": {
+      "fcnt": 500,
+      "tx_node": 5,
+      "kind": "WAKE_NET",
+      "class": "WakeNetFrame",
+      "sender_id": 66,
+      "sequence": 40,
+      "lease": 60,
+      "epoch": 9
+     },
+     "preamble": 491
+    },
+    {
+     "at": 115.5,
+     "tx": "9305428065000000056a265b15a42b",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "EVENT",
+      "class": "EventFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "event_id": 7,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 117.0,
+     "tx": "9305428065000000056a265b15a42b",
+     "frame": {
+      "fcnt": 101,
+      "tx_node": 5,
+      "kind": "EVENT",
+      "class": "EventFrame",
+      "sender_id": 5,
+      "target_id": 66,
+      "sequence": 128,
+      "event_id": 7,
+      "epoch": 5
+     }
+    },
+    {
+     "at": 130.0,
+     "tx": "8505ff0066000000056e09810680",
+     "frame": {
+      "fcnt": 102,
+      "tx_node": 5,
+      "kind": "HELLO",
+      "class": "HelloFrame",
+      "sender_id": 5,
+      "sequence": 0,
+      "state": 1,
+      "target_id": 255
+     }
+    },
+    {
+     "at": 160.0,
+     "dormant": true
+    }
+   ]
+  }
+ ]
+}

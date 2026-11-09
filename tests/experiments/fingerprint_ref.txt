@@ -1,0 +1,15 @@
+dormant random 1 84aaeb7864a6ab31 3675
+dormant random 2 7c5cc1d655818114 3931
+dormant grid 1 7c0b19fe2b445053 3660
+dormant grid 2 5e412a18121ee9d1 1724
+awake random40 1 acc315dff9a8e542 1345
+awake random40 2 284575bea0b38ac9 1555
+awake grid40 1 0bc88cf75e8c63f8 477
+awake grid40 2 1321de58fa59c6c5 568
+chaos random40 1 {"confirmed": 0, "direct": 24, "done": 24, "not_run": 0, "unconfirmed": 0, "unconfirmed_ran": 0} 24
+chaos grid40 1 {"confirmed": 0, "direct": 24, "done": 24, "not_run": 0, "unconfirmed": 0, "unconfirmed_ran": 0} 24
+dual_radio line 1 f5244f4af1a90fed 66
+health line 2 c839a65d829dd44a 0
+saved_scan line 4 93ec7bc439998251 56
+weak ladder 2 04b35a26b96bfc55 54
+join_storm line 3 2eb818f8bec6b830 70

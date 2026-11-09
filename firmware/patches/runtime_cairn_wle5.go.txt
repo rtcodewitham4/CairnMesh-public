@@ -1,0 +1,119 @@
+//go:build cairn_wle5
+
+package runtime
+
+import (
+	_ "unsafe"
+
+	"device/stm32"
+	"machine"
+)
+
+// SYSCLK = 48 MHz from the PLL on HSI16, not on HSE32 (CairnMesh, 2026-11-05).
+// The module's HSE32 is a TCXO powered from PB0-VDDTCXO, and RM0461 6.2.1
+// (HSE32 TCXO control) requires the TCXO voltage to be set first, inside the
+// radio, with the SUBGHZ Set_TcxoMode command, before HSEBYPPWR and HSEON: the
+// upstream runtime sets those at once and waits for HSERDY, which would hang
+// before main on a board whose radio has not been told the voltage. The radio
+// powers its TCXO and clocks itself; the CPU does not need HSE32.
+//   VCO = HSI16 / PLLM * PLLN = 16 / 1 * 6 = 96 MHz; R = VCO / 2 = 48 MHz (SYSCLK);
+//   Q = VCO / 2 = 48 MHz (RNG kernel clock, RNGSEL = PLLQ), P = VCO / 2.
+// HSI16 is +-1 % at 25 degC (RM0461 6.2.2): fine for UART and timers; every radio
+// timing comes from the TCXO inside the radio. 48 MHz is the bring-up choice,
+// not the low-power one (MSI or HSI16 plus Stop2 come with the low-power work).
+const (
+	PLL_M = 1
+	PLL_N = 6
+	PLL_R = 2
+	PLL_P = 2
+	PLL_Q = 2
+)
+
+//go:linkname cairnFillSystemStack cairn_fillSystemStack
+func cairnFillSystemStack()
+
+// prepareSystemStack fills the unused part of the linker's MSP region before
+// preinit/init or interrupts run. The assembly routine stops below its own
+// active frame, so it never overwrites the Reset_Handler stack in use.
+func prepareSystemStack() {
+	cairnFillSystemStack()
+}
+
+func init() {
+
+	// Configure 48Mhz clock
+	initCLK()
+
+	// Timers init
+	initTickTimer(&machine.TIM1)
+
+	// UART init
+	machine.InitSerial()
+}
+
+func initCLK() {
+
+	// HSI16 on (it is also the wake-up source after Stop; 16 MHz, RM0461 6.2.2).
+	stm32.RCC.CR.SetBits(stm32.RCC_CR_HSION)
+	for !stm32.RCC.CR.HasBits(stm32.RCC_CR_HSIRDY) {
+	}
+
+	// Disable PLL
+	stm32.RCC.CR.ClearBits(stm32.RCC_CR_PLLON)
+	for stm32.RCC.CR.HasBits(stm32.RCC_CR_PLLRDY) {
+	}
+
+	// Configure the PLL on HSI16
+	stm32.RCC.PLLCFGR.Set((PLL_M-1)<<stm32.RCC_PLLCFGR_PLLM_Pos |
+		((PLL_N) << stm32.RCC_PLLCFGR_PLLN_Pos) |
+		((PLL_Q - 1) << stm32.RCC_PLLCFGR_PLLQ_Pos) |
+		((PLL_R - 1) << stm32.RCC_PLLCFGR_PLLR_Pos) |
+		((PLL_P - 1) << stm32.RCC_PLLCFGR_PLLP_Pos) |
+		stm32.RCC_PLLCFGR_PLLSRC_HSI16 | stm32.RCC_PLLCFGR_PLLPEN | stm32.RCC_PLLCFGR_PLLQEN)
+
+	// Flash latency of 2 wait states before the clock goes up (48 MHz, range 1).
+	stm32.FLASH.ACR.ReplaceBits(stm32.Flash_ACR_LATENCY_WS2, stm32.Flash_ACR_LATENCY_Msk, 0)
+	for (stm32.FLASH.ACR.Get() & stm32.Flash_ACR_LATENCY_Msk) != stm32.Flash_ACR_LATENCY_WS2 {
+	}
+
+	// Enable PLL and its system clock output
+	stm32.RCC.CR.SetBits(stm32.RCC_CR_PLLON)
+	for !stm32.RCC.CR.HasBits(stm32.RCC_CR_PLLRDY) {
+	}
+	stm32.RCC.PLLCFGR.SetBits(stm32.RCC_PLLCFGR_PLLREN)
+
+	// HCLK1 (CPU), HCLK3 (shared by the radio and flash), PCLK1, PCLK2: all /1
+	stm32.RCC.CFGR.ReplaceBits(stm32.RCC_CFGR_HPRE_Div1, stm32.RCC_CFGR_HPRE_Msk, 0)
+	for !stm32.RCC.CFGR.HasBits(stm32.RCC_CFGR_HPREF) {
+	}
+	stm32.RCC.EXTCFGR.ReplaceBits(stm32.RCC_EXTCFGR_SHDHPRE_Div1, stm32.RCC_EXTCFGR_SHDHPRE_Msk, 0)
+	for !stm32.RCC.EXTCFGR.HasBits(stm32.RCC_EXTCFGR_SHDHPREF) {
+	}
+	stm32.RCC.CFGR.ReplaceBits(stm32.RCC_CFGR_PPRE1_Div1, stm32.RCC_CFGR_PPRE1_Msk, 0)
+	for !stm32.RCC.CFGR.HasBits(stm32.RCC_CFGR_PPRE1F) {
+	}
+	stm32.RCC.CFGR.ReplaceBits(stm32.RCC_CFGR_PPRE2_Div1, stm32.RCC_CFGR_PPRE2_Msk, 0)
+	for !stm32.RCC.CFGR.HasBits(stm32.RCC_CFGR_PPRE2F) {
+	}
+
+	// System clock = PLLR
+	stm32.RCC.CFGR.ReplaceBits(stm32.RCC_CFGR_SW_PLLR, stm32.RCC_CFGR_SW_Msk, 0)
+	for (stm32.RCC.CFGR.Get() & stm32.RCC_CFGR_SWS_Msk) != (stm32.RCC_CFGR_SWS_PLLR << stm32.RCC_CFGR_SWS_Pos) {
+	}
+}
+
+func putchar(c byte) {
+	machine.Serial.WriteByte(c)
+}
+
+func getchar() byte {
+	for machine.Serial.Buffered() == 0 {
+		Gosched()
+	}
+	v, _ := machine.Serial.ReadByte()
+	return v
+}
+
+func buffered() int {
+	return machine.Serial.Buffered()
+}

@@ -1,0 +1,119 @@
+{
+  "ruff_version": "0.12.11",
+  "total": 95,
+  "counts": {
+    "B008": 3,
+    "B023": 6,
+    "B905": 16,
+    "C901": 15,
+    "F821": 1,
+    "PLR0911": 8,
+    "PLR0912": 18,
+    "PLR0913": 15,
+    "PLR0915": 13
+  },
+  "files": {
+    "cairnmesh/controller.py": {
+      "C901": 1,
+      "PLR0912": 2,
+      "PLR0913": 1,
+      "PLR0915": 1
+    },
+    "cairnmesh/device.py": {
+      "PLR0913": 1
+    },
+    "cairnmesh/discovery.py": {
+      "PLR0913": 1
+    },
+    "cairnmesh/discovery_bench.py": {
+      "B023": 3
+    },
+    "cairnmesh/energy.py": {
+      "B008": 2
+    },
+    "cairnmesh/gateway.py": {
+      "B905": 3,
+      "C901": 3,
+      "PLR0911": 1,
+      "PLR0912": 4,
+      "PLR0913": 1,
+      "PLR0915": 3
+    },
+    "cairnmesh/latency.py": {
+      "PLR0913": 1
+    },
+    "cairnmesh/linkqa.py": {
+      "B905": 4
+    },
+    "cairnmesh/liveness.py": {
+      "PLR0913": 1
+    },
+    "cairnmesh/liveness_demo.py": {
+      "C901": 1,
+      "PLR0915": 1
+    },
+    "cairnmesh/mesh.py": {
+      "B008": 1,
+      "C901": 5,
+      "PLR0911": 3,
+      "PLR0912": 5,
+      "PLR0913": 2,
+      "PLR0915": 4
+    },
+    "cairnmesh/mesh_sim.py": {
+      "B905": 1,
+      "C901": 2,
+      "F821": 1,
+      "PLR0912": 2,
+      "PLR0913": 2,
+      "PLR0915": 1
+    },
+    "cairnmesh/nodebook.py": {
+      "B905": 8,
+      "C901": 1,
+      "PLR0912": 1
+    },
+    "cairnmesh/node.py": {
+      "PLR0913": 1
+    },
+    "cairnmesh/outcomes.py": {
+      "PLR0911": 1
+    },
+    "cairnmesh/pathview.py": {
+      "C901": 1,
+      "PLR0912": 1
+    },
+    "cairnmesh/robustness_bench.py": {
+      "PLR0915": 1
+    },
+    "cairnmesh/secure.py": {
+      "PLR0911": 2
+    },
+    "cairnmesh/session.py": {
+      "PLR0913": 2
+    },
+    "cairnmesh/session_bench.py": {
+      "B023": 2,
+      "PLR0915": 1
+    },
+    "cairnmesh/session_demo.py": {
+      "B023": 1
+    },
+    "cairnmesh/stress_bench.py": {
+      "PLR0912": 1
+    },
+    "cairnmesh/uplink.py": {
+      "PLR0913": 1
+    },
+    "cairnmesh/wake.py": {
+      "C901": 1,
+      "PLR0911": 1,
+      "PLR0912": 1,
+      "PLR0913": 1
+    },
+    "cairnmesh/wake_bench.py": {
+      "PLR0912": 1,
+      "PLR0915": 1
+    }
+  }
+}

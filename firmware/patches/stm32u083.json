@@ -1,0 +1,17 @@
+{
+    "inherits": [
+        "cortex-m0plus"
+    ],
+    "build-tags": [
+        "stm32u083",
+        "stm32u0",
+        "stm32"
+    ],
+    "serial": "uart",
+    "linkerscript": "targets/stm32u083.ld",
+    "extra-files": [
+        "src/device/stm32/stm32u083.s"
+    ],
+    "flash-method": "command",
+    "flash-command": "STM32_Programmer_CLI -c port=SWD -w {bin} 0x08000000 -v -rst"
+}

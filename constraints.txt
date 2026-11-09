@@ -1,0 +1,15 @@
+# The versions CI tests with: pyproject.toml lists what the package
+# needs (lower bounds), this file pins what was tested, transitive ones too.
+#   python -m pip install -c constraints.txt -e ".[secure,serial,dev]"
+# Raise a pin in its own commit, after the tests pass with it.
+cryptography==50.0.1
+cffi==2.1.1
+pycparser==3.0
+pyserial==3.5
+pytest==9.1.1
+ruff==0.12.11
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+tomli==2.2.1; python_version < "3.11"
+exceptiongroup==1.2.2; python_version < "3.11"

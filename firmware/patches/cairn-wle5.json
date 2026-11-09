@@ -1,0 +1,19 @@
+{
+    "inherits": [
+        "cortex-m4"
+    ],
+    "build-tags": [
+        "stm32wle5",
+        "stm32wlx",
+        "stm32",
+        "cairn_wle5"
+    ],
+    "serial": "uart",
+    "linkerscript": "targets/cairn-wle5.ld",
+    "extra-files": [
+        "src/device/stm32/stm32wle5.s",
+        "src/runtime/runtime_cairn_wle5_stack.s"
+    ],
+    "flash-method": "command",
+    "flash-command": "STM32_Programmer_CLI -c port=SWD mode=UR -w {bin} 0x08000000 -v -rst"
+}

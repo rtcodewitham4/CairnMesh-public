@@ -1,0 +1,26 @@
+//go:build stm32u0
+
+package runtime
+
+import (
+	"device/arm"
+	"unsafe"
+)
+
+//go:extern __isr_vector
+var __isr_vector [0]uint32
+
+// initVectorTable puts the core in its reset state for this program: VTOR
+// on this program's vector table, every interrupt disabled and cleared,
+// SysTick stopped. After a reset that is already so. But the system
+// bootloader's Go command (after a USB DFU download) jumps in with VTOR on
+// the bootloader's table and its USB interrupt enabled: the first interrupt
+// would run a bootloader handler, or this program's default handler (a wfe
+// loop), and the program would hang before main. Clocks and peripherals
+// are left to the program (cairnmesh firmware: board.ResetIfStartedByBootloader).
+func initVectorTable() {
+	arm.SCB.VTOR.Set(uint32(uintptr(unsafe.Pointer(&__isr_vector))))
+	arm.SYST.SYST_CSR.Set(0)
+	arm.NVIC.ICER[0].Set(0xFFFFFFFF)
+	arm.NVIC.ICPR[0].Set(0xFFFFFFFF)
+}

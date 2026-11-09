@@ -1,0 +1,6 @@
+//go:build stm32 && !cairn_wle5
+
+package runtime
+
+// only the CairnMesh WLE5 target instruments the system stack
+func prepareSystemStack() {}

@@ -1,0 +1,6 @@
+build/
+backups/
+results/
+
+# Vendor manuals (copyrighted, large): kept locally
+docs/manuals/

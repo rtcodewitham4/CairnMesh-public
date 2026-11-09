@@ -1,0 +1,39 @@
+name: Release
+
+# A tag vX.Y.Z publishes the Python package with checksums. The
+# firmware image is built on the machine with the locked TinyGo (patches/
+# tinygo-wle5.lock) by `make -C firmware dist`, and uploaded to the same release
+# by hand: deployment images carry no keys.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -c constraints.txt -e ".[secure,serial,dev]" build==1.2.2
+      - run: python -m pytest -q
+      - run: python -m build --outdir dist
+      - run: cd dist && sha256sum * > SHA256SUMS && cat SHA256SUMS
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Python package and checksums. Firmware: \`make -C firmware dist\` on the build machine, then"
+            echo "\`gh release upload ${GITHUB_REF_NAME} firmware/build/dist/*\`."
+            echo
+            echo "TinyGo (firmware/patches/tinygo-wle5.lock):"
+            echo '```'
+            grep -E '^(version|commit) ' firmware/patches/tinygo-wle5.lock
+            echo '```'
+          } > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* --title "$GITHUB_REF_NAME" --notes-file notes.md

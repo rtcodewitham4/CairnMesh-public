@@ -1,0 +1,2863 @@
+{
+ "layer": "device endpoint, plain frames above the security layer (protocol_spec.md 16.1)",
+ "rules": [
+  "time advances event by event; at an instant: timers due before it, then the input, then timers due at it",
+  "every random draw uniform(a, b) takes (a + b) / 2",
+  "actions: per ACTION 'time' (s, default 0) and 'result' (default OK); 'run' is logged when the action starts, its result counts once 'time' is over",
+  "'pending': the action returns PENDING (run result -1), 'time' is its deadline; a 'complete' step calls Device.complete and logs whether it was taken",
+  "expect lists every sent frame ('tx') and every action run ('run'), in order"
+ ],
+ "cases": [
+  {
+   "name": "request_runs_once_and_answers",
+   "spec": "4.1",
+   "description": "A fast action runs at once and its result is the answer.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090105",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 5,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 5,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "retry_replays_the_original_result",
+   "spec": "4.1",
+   "description": "A retry is answered with the stored result (ERROR stays ERROR) and does not run again.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "3": {
+     "result": 1
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090300",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 3,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010a090300",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 3,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 3,
+      "value": 0,
+      "result": 1
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0901",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420a0901",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 1,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "window_pushes_out_the_oldest_closed_record",
+   "spec": "4.1",
+   "description": "dedup_window closed records per sender: the oldest is pushed out, its late copy runs again.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0,
+    "dedup_window": 2
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010b090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142010c090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 12,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "rx": "0142010b090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420b0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420c0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 12,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "tx": "0201420b0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 5.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "senders_are_kept_least_recently_used",
+   "spec": "4.1",
+   "description": "max_senders lists; a new sender pushes out the least recently used one.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0,
+    "max_senders": 1
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0143010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 67,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201430a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 67,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "a_retry_keeps_its_sender",
+   "spec": "4.1",
+   "description": "A retry counts as hearing from its sender: a third sender pushes out the other one, the retry after it is answered from the record.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0,
+    "max_senders": 2
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0143010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 67,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "rx": "0144010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 68,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201430a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 67,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 4.0,
+     "tx": "0201440a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 68,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "a_query_keeps_its_sender",
+   "spec": "4.1",
+   "description": "A query counts as hearing from its sender too: the third sender pushes out the other one.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0,
+    "max_senders": 2
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0143010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 67,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142011409ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 20,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "rx": "0144010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 68,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201430a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 67,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "020142140900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 20,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 4.0,
+     "tx": "0201440a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 68,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "records_expire_after_the_keep_period",
+   "spec": "4.1",
+   "description": "Past dedup_ttl a record is forgotten: a copy arriving later runs again.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0,
+    "dedup_ttl": 60.0
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 30.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 62.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 65.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 30.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 62.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 62.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "query_answers_the_stored_result",
+   "spec": "4.1, 4.2",
+   "description": "A status query (ACTION 0xFF, VALUE = asked SEQUENCE) gets the stored result and runs nothing.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "3": {
+     "result": 1
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090300",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 3,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010b09ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 3,
+      "value": 0,
+      "result": 1
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0901",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420b0901",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 1,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "query_of_an_unknown_request_makes_not_run_final",
+   "spec": "4.1, 4.2",
+   "description": "An unknown request is answered NOT_RUN and recorded so: a late copy is refused, not run.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010b09ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "tx": "0201420b0902",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 2,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420a0902",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 2,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "frames_for_others_and_broadcast_requests_are_ignored",
+   "spec": "4.1",
+   "description": "A REQUEST to another node or to broadcast, and an undecodable frame, get no answer.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142020a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 2,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142ff0b090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 255,
+      "sequence": 11,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "ff00"
+    }
+   ],
+   "end": 5.0,
+   "expect": []
+  },
+  {
+   "name": "sleeping_device_defers_frames_and_wakes",
+   "spec": "4.1",
+   "description": "Asleep, a frame is handled after sleep_delay (midpoint 2 s); WAKE switches to READY.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": false,
+    "heartbeat_interval": 1000000.0
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.5,
+     "rx": "0342010b09",
+     "frame": {
+      "kind": "WAKE",
+      "class": "WakeFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "rx": "0142010c090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 12,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 8.0,
+   "expect": [
+    {
+     "at": 3.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.5,
+     "tx": "0201420b0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 4.0,
+     "tx": "0201420c0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 12,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "sleep_queue_drops_repeats_and_overflow",
+   "spec": "4.1",
+   "description": "A copy of a waiting frame adds nothing; past max_deferred frames are dropped.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": false,
+    "heartbeat_interval": 1000000.0,
+    "max_deferred": 2
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.4,
+     "rx": "0142010b090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.6,
+     "rx": "0142010c090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 12,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 6.0,
+   "expect": [
+    {
+     "at": 3.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.4,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 3.4,
+     "tx": "0201420b0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "heartbeats_follow_the_interval",
+   "spec": "4.1",
+   "description": "First heartbeat at the midpoint of (0.2, interval), then every interval; it carries the state.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": false,
+    "heartbeat_interval": 3.0
+   },
+   "steps": [
+    {
+     "at": 4.0,
+     "rx": "0342010a09",
+     "frame": {
+      "kind": "WAKE",
+      "class": "WakeFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 9.0,
+   "expect": [
+    {
+     "at": 1.6,
+     "tx": "0401420000",
+     "frame": {
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 0,
+      "state": 0
+     }
+    },
+    {
+     "at": 4.6,
+     "tx": "0401420100",
+     "frame": {
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 1,
+      "state": 0
+     }
+    },
+    {
+     "at": 6.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 7.6,
+     "tx": "0401420201",
+     "frame": {
+      "kind": "HEARTBEAT",
+      "class": "HeartbeatFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 2,
+      "state": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "slow_action_accepts_then_reports",
+   "spec": "4.1",
+   "description": "Past answer_budget: ACCEPTED at once, RESULT when done, repeated until acknowledged.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "7": {
+     "time": 5.0
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 17.0,
+     "rx": "0242010a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 60.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 7,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 6.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 16.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "unacknowledged_result_backs_off_then_stops",
+   "spec": "4.1",
+   "description": "RESULT again after result_timeout × 2^n, result_retries more times, then left to queries.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "7": {
+     "time": 5.0
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 200.0,
+     "rx": "0142010b09ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 260.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 7,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 6.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 16.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 36.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 76.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 156.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 200.0,
+     "tx": "0201420b0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "query_while_running_then_after",
+   "spec": "4.1, 4.2",
+   "description": "A query meets the running action: ACCEPTED. Once over, the query gets the result and stops the RESULT repeats.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "7": {
+     "time": 5.0
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142010b09ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 8.0,
+     "rx": "0142010c09ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 12,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 40.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 7,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420b0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 6.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 8.0,
+     "tx": "0201420c0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 12,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "short_action_answer_waits_for_the_result",
+   "spec": "4.1",
+   "description": "Within answer_budget the answer is sent when the action is over and carries the result; no RESULT.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "6": {
+     "time": 0.4
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090600",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 6,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 20.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 6,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.4,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "retry_during_short_action_hears_accepted_then_result",
+   "spec": "4.1",
+   "description": "A retry while the short action runs is answered ACCEPTED, so a RESULT follows (review A6).",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "6": {
+     "time": 0.4
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090600",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 6,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "rx": "0142010a090600",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 6,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0242010a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 20.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 6,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.2,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.4,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.4,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "open_records_past_max_open_are_refused",
+   "spec": "4.1, 9",
+   "description": "Past max_open open records a slow request is refused NOT_RUN, finally (a late copy too).",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0,
+    "max_open": 1
+   },
+   "actions": {
+    "7": {
+     "time": 5.0
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010b090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142010b090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 7.0,
+     "rx": "0242010a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 10.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 7,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420b0902",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 2,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420b0902",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 2,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 6.0,
+     "tx": "1201420a0900",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "reboot_keeps_records_and_ends_a_cut_action_interrupted",
+   "spec": "4.1",
+   "description": "Records survive a reboot: a retry is not run. An action cut short is INTERRUPTED (no final result; it may have completed; wire v5), not ERROR; the retry gets INTERRUPTED and closes the record, so no RESULT follows (STATUS P4; one not asked about sends its RESULT after boot, next case).",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "7": {
+     "time": 5.0
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010b090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "reboot": true
+    },
+    {
+     "at": 4.0,
+     "rx": "0142010a090100",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 1,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "rx": "0142010b090700",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 7,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 9.0,
+     "rx": "0242010b0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 20.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 1,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "run": {
+      "action": 7,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420b0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 4.0,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 5.0,
+     "tx": "0201420b0904",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 4,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "reboot_cuts_a_short_action_and_the_retry_gets_interrupted",
+   "spec": "4.1",
+   "description": "A reboot while a short action (within the budget) runs: its answer was not sent; the retry gets INTERRUPTED, not ERROR and not OK, and is not run again (wire v5). A failed action's ERROR still replays as ERROR (retry_replays_the_original_result).",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "6": {
+     "time": 0.4
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090600",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 6,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "reboot": true
+    },
+    {
+     "at": 2.0,
+     "rx": "0142010a090600",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 6,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0142010a090600",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 6,
+      "value": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 6.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 6,
+      "value": 0,
+      "result": 0
+     }
+    },
+    {
+     "at": 2.0,
+     "tx": "0201420a0904",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 4,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "tx": "0201420a0904",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 4,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "pending_long_action_reports_when_it_completes",
+   "spec": "4.1",
+   "description": "Result known later, past the budget: ACCEPTED at once, the RESULT as soon as the application completes it (ERROR here), not at the deadline.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "8": {
+     "time": 5.0,
+     "pending": true
+    },
+    "9": {
+     "time": 0.5,
+     "pending": true
+    },
+    "4": {
+     "pending": true
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090800",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 8,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.5,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 1
+     }
+    },
+    {
+     "at": 3.0,
+     "rx": "0242010a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 20.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 8,
+      "value": 0,
+      "result": -1
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.5,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 1,
+      "taken": true
+     }
+    },
+    {
+     "at": 2.5,
+     "tx": "1201420a0901",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 1,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "pending_short_action_answers_when_it_completes",
+   "spec": "4.1",
+   "description": "Result known later, deadline within the budget: the answer waits and goes as soon as it completes.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "8": {
+     "time": 5.0,
+     "pending": true
+    },
+    "9": {
+     "time": 0.5,
+     "pending": true
+    },
+    "4": {
+     "pending": true
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090900",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 9,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.2,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 9,
+      "value": 0,
+      "result": -1
+     }
+    },
+    {
+     "at": 1.2,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0,
+      "taken": true
+     }
+    },
+    {
+     "at": 1.2,
+     "tx": "0201420a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "pending_action_past_its_deadline_is_error",
+   "spec": "4.1",
+   "description": "No completion by the deadline: ERROR (RESULT); a late completion changes nothing and a query gets ERROR.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "8": {
+     "time": 5.0,
+     "pending": true
+    },
+    "9": {
+     "time": 0.5,
+     "pending": true
+    },
+    "4": {
+     "pending": true
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090800",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 8,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 7.0,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0
+     }
+    },
+    {
+     "at": 8.0,
+     "rx": "0142010b09ff0a",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 11,
+      "action": 255,
+      "value": 10,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 10.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 8,
+      "value": 0,
+      "result": -1
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 6.0,
+     "tx": "1201420a0901",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 7.0,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0,
+      "taken": false
+     }
+    },
+    {
+     "at": 8.0,
+     "tx": "0201420b0901",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 11,
+      "result": 1,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "pending_action_cut_by_a_reboot_is_interrupted",
+   "spec": "4.1",
+   "description": "A reboot cuts a pending action: INTERRUPTED, its RESULT after boot; the completion that comes after is ignored.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "8": {
+     "time": 5.0,
+     "pending": true
+    },
+    "9": {
+     "time": 0.5,
+     "pending": true
+    },
+    "4": {
+     "pending": true
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090800",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 8,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 2.0,
+     "reboot": true
+    },
+    {
+     "at": 3.0,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0
+     }
+    },
+    {
+     "at": 8.0,
+     "rx": "0242010a0900",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "result": 0,
+      "epoch": 9
+     }
+    }
+   ],
+   "end": 20.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 8,
+      "value": 0,
+      "result": -1
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0903",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 3,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 3.0,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0,
+      "taken": false
+     }
+    },
+    {
+     "at": 7.0,
+     "tx": "1201420a0904",
+     "frame": {
+      "kind": "RESULT",
+      "class": "ResultFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 4,
+      "epoch": 9
+     }
+    }
+   ]
+  },
+  {
+   "name": "pending_instant_action_is_error",
+   "spec": "4.1",
+   "description": "An instant action (no time) cannot complete later: PENDING there is answered ERROR.",
+   "config": {
+    "device_id": 1,
+    "controller_id": 66,
+    "awake": true,
+    "heartbeat_interval": 1000000.0
+   },
+   "actions": {
+    "8": {
+     "time": 5.0,
+     "pending": true
+    },
+    "9": {
+     "time": 0.5,
+     "pending": true
+    },
+    "4": {
+     "pending": true
+    }
+   },
+   "steps": [
+    {
+     "at": 1.0,
+     "rx": "0142010a090400",
+     "frame": {
+      "kind": "REQUEST",
+      "class": "RequestFrame",
+      "sender_id": 66,
+      "target_id": 1,
+      "sequence": 10,
+      "action": 4,
+      "value": 0,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.5,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0
+     }
+    }
+   ],
+   "end": 5.0,
+   "expect": [
+    {
+     "at": 1.0,
+     "run": {
+      "action": 4,
+      "value": 0,
+      "result": -1
+     }
+    },
+    {
+     "at": 1.0,
+     "tx": "0201420a0901",
+     "frame": {
+      "kind": "REPLY",
+      "class": "ReplyFrame",
+      "sender_id": 1,
+      "target_id": 66,
+      "sequence": 10,
+      "result": 1,
+      "epoch": 9
+     }
+    },
+    {
+     "at": 1.5,
+     "complete": {
+      "sender": 66,
+      "sequence": 10,
+      "epoch": 9,
+      "result": 0,
+      "taken": false
+     }
+    }
+   ]
+  }
+ ]
+}

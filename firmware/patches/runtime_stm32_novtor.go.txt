@@ -1,0 +1,6 @@
+//go:build stm32 && !stm32u0
+
+package runtime
+
+// initVectorTable does nothing on these parts (see runtime_stm32u0_vtor.go).
+func initVectorTable() {}

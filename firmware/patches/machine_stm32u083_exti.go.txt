@@ -1,0 +1,88 @@
+//go:build stm32u083
+
+// Proposed addition to the TinyGo source tree: copy this file to
+// $TINYGOROOT/src/machine/machine_stm32u083_exti.go to give the U083
+// Pin.SetInterrupt, which the official tinygo.org/x/drivers/sx126x package
+// needs for DIO1. It is the extihw package of this project (tested on the
+// board) moved into package machine.
+//
+// Do not use it together with u083demo/extihw: both register the EXTI
+// interrupt handlers.
+
+package machine
+
+import (
+	"device/stm32"
+	"runtime/interrupt"
+	"runtime/volatile"
+)
+
+var (
+	pinCallbacks [16]func(Pin)
+	interruptPin [16]Pin
+	extiIRQs     [3]interrupt.Interrupt
+)
+
+func init() {
+	extiIRQs[0] = interrupt.New(stm32.IRQ_EXTI0_1, handleEXTI)
+	extiIRQs[1] = interrupt.New(stm32.IRQ_EXTI2_3, handleEXTI)
+	extiIRQs[2] = interrupt.New(stm32.IRQ_EXTI4_15, handleEXTI)
+}
+
+func handleEXTI(interrupt.Interrupt) {
+	pending := (stm32.EXTI.RPR1.Get() | stm32.EXTI.FPR1.Get()) & 0xFFFF
+	stm32.EXTI.RPR1.Set(pending)
+	stm32.EXTI.FPR1.Set(pending)
+	for line := uint8(0); pending != 0; line++ {
+		if pending&1 != 0 && pinCallbacks[line] != nil {
+			pinCallbacks[line](interruptPin[line])
+		}
+		pending >>= 1
+	}
+}
+
+// SetInterrupt sets an interrupt to be executed when a particular pin
+// changes state. The pin should already be configured as an input. A nil
+// callback disables the interrupt. One pin per line number (PA3 and PB3
+// share line 3).
+func (p Pin) SetInterrupt(change PinChange, callback func(Pin)) error {
+	line := uint8(p % 16)
+	port := uint32(p / 16)
+	bit := uint32(1) << line
+	exti := stm32.EXTI
+
+	exti.IMR1.ClearBits(bit)
+	if callback == nil {
+		pinCallbacks[line] = nil
+		return nil
+	}
+
+	cr := [4]*volatile.Register32{&exti.EXTICR1, &exti.EXTICR2, &exti.EXTICR3, &exti.EXTICR4}[line/4]
+	shift := uint32(line%4) * 8
+	cr.Set(cr.Get()&^(0xFF<<shift) | port<<shift)
+
+	if change&PinRising != 0 {
+		exti.RTSR1.SetBits(bit)
+	} else {
+		exti.RTSR1.ClearBits(bit)
+	}
+	if change&PinFalling != 0 {
+		exti.FTSR1.SetBits(bit)
+	} else {
+		exti.FTSR1.ClearBits(bit)
+	}
+	exti.RPR1.Set(bit)
+	exti.FPR1.Set(bit)
+
+	interruptPin[line], pinCallbacks[line] = p, callback
+	exti.IMR1.SetBits(bit)
+	irq := extiIRQs[2]
+	if line < 2 {
+		irq = extiIRQs[0]
+	} else if line < 4 {
+		irq = extiIRQs[1]
+	}
+	irq.SetPriority(0x40)
+	irq.Enable()
+	return nil
+}

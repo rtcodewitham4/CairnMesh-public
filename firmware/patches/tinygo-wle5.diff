@@ -1,0 +1,22 @@
+diff --git a/src/runtime/runtime_stm32.go b/src/runtime/runtime_stm32.go
+index c4f2ef66..80c022c0 100644
+--- a/src/runtime/runtime_stm32.go
++++ b/src/runtime/runtime_stm32.go
+@@ -6,6 +6,7 @@ import "device/arm"
+ 
+ //export Reset_Handler
+ func main() {
++	prepareSystemStack()
+ 	preinit()
+ 	run()
+ 	exit(0)
+diff --git a/src/runtime/runtime_stm32wlx.go b/src/runtime/runtime_stm32wlx.go
+index 278a1170..99b5370b 100644
+--- a/src/runtime/runtime_stm32wlx.go
++++ b/src/runtime/runtime_stm32wlx.go
+@@ -1,4 +1,4 @@
+-//go:build stm32wlx
++//go:build stm32wlx && !cairn_wle5
+ 
+ package runtime
+ 

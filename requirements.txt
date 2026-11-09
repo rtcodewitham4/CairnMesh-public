@@ -1,0 +1,4 @@
+# Runtime dependencies are declared in pyproject.toml; this installs them
+# (with the secure link and the serial port) at the versions CI tests.
+-c constraints.txt
+-e .[secure,serial]
